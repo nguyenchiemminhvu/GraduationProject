@@ -54,5 +54,8 @@ void HUD::onGameInstructionClose()
 
 void HUD::initComponents()
 {
+	origin = cocos2d::Director::getInstance()->getVisibleOrigin();
+	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+
 
 }
