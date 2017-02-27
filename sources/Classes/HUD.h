@@ -9,23 +9,36 @@ class HUD : public cocos2d::LayerColor
 {
 public:
 
-	static HUD* createLayer();
+	static HUD* createLayer(cocos2d::Layer *parent);
 
-	HUD();
+	HUD(cocos2d::Layer *parent);
 	virtual ~HUD();
 
 	virtual void update(float dt);
 	virtual void draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, bool transformUpdated);
 
-	void onGameInstructionShow();
-	void onGameInstructionClose();
+	void showArrow(cocos2d::Vec2 pos);
+	void hideArrow();
+
+	void showTextBoard(cocos2d::String text);
+	void hideTextBoard();
 
 private:
 
 	cocos2d::Vec2 origin;
 	cocos2d::Size visibleSize;
 
+	cocos2d::Layer *parentLayer;
+
+	bool isArrowShowing;
+	cocos2d::Sprite *arrow;
+
+	bool isTextBoardShowing;
+	cocos2d::Sprite *textBoard;
+
 	void initComponents();
+	void loadArrow();
+	void loadTextBoard();
 
 };
 

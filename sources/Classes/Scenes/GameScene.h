@@ -9,6 +9,8 @@
 #include "Player\MainCharacter.h"
 #include "Enemies\Enemy.h"
 
+#include "HUD.h"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -42,6 +44,8 @@ private:
 
 	MainCharacter *mainCharacter;
 	EnemyFactory *enemyFactory;
+
+	HUD	*hud;
 
 	////////////////////////////////////////
 	// Tiled map properties
@@ -81,6 +85,7 @@ private:
 	bool initMainCharaceter();
 	bool initPath();
 	bool initUI();
+	bool initHUD();
 
 	bool initEnemies();
 

@@ -50,6 +50,9 @@ bool GameScene::init()
 	if (!initUI())
 		return false;
 
+	if (!initHUD())
+		return false;
+
 	if (!initEnemies())
 		return false;
 
@@ -59,6 +62,8 @@ bool GameScene::init()
 	if (!initContactListener())
 		return false;
 	
+	hud->showTextBoard("Hello mother fucker");
+
 	return true;
 }
 
@@ -191,6 +196,19 @@ bool GameScene::initUI()
 	);
 	this->addChild(buttonReady);
 	buttonReady->addTouchEventListener(CC_CALLBACK_2(GameScene::onButtonReadyTouched, this));
+
+	return true;
+}
+
+
+bool GameScene::initHUD()
+{
+	hud = HUD::createLayer(this);
+	
+	if (!hud)
+	{
+		return false;
+	}
 
 	return true;
 }
