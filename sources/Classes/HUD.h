@@ -4,6 +4,7 @@
 #define __HUD_H__
 
 #include "cocos2d.h"
+#include "ui\CocosGUI.h"
 
 class HUD : public cocos2d::LayerColor
 {
@@ -20,8 +21,10 @@ public:
 	void showArrow(cocos2d::Vec2 pos);
 	void hideArrow();
 
-	void showTextBoard(cocos2d::String text);
+	void showTextBoard(cocos2d::String newText);
 	void hideTextBoard();
+	void changeTextOnBoard(cocos2d::String newText);
+	void clearTextOnBoard();
 
 private:
 
@@ -35,6 +38,7 @@ private:
 
 	bool isTextBoardShowing;
 	cocos2d::Sprite *textBoard;
+	cocos2d::ui::Text *text;
 
 	void initComponents();
 	void loadArrow();

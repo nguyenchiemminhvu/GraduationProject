@@ -1,5 +1,6 @@
 #include "HUD.h"
 
+#define TEXT_PADDING_ON_BOARD 10.0F
 
 
 HUD * HUD::createLayer(cocos2d::Layer *parent)
@@ -63,10 +64,21 @@ void HUD::hideArrow()
 }
 
 
-void HUD::showTextBoard(cocos2d::String text)
+void HUD::showTextBoard(cocos2d::String newText)
 {
+	if (isTextBoardShowing)
+	{
+		// clear text on text board and make it invisible
+		textBoard->setScaleY(0.0F);
+		if (text)
+		{
+			text->setText("");
+		}
+	}
+
 	isTextBoardShowing = true;
-	
+	text->setText(newText.getCString());
+
 	// setup scale up action
 	auto scaleUp = cocos2d::ScaleTo::create(0.3F, 1.0F, 1.0F);
 	textBoard->runAction(scaleUp);
@@ -79,7 +91,33 @@ void HUD::hideTextBoard()
 
 	// setup scale down action
 	auto scaleDown = cocos2d::ScaleTo::create(0.3F, 1.0F, 0.0F);
-	textBoard->runAction(scaleDown);
+	textBoard->runAction(
+		cocos2d::Sequence::create(
+			scaleDown,
+			cocos2d::CallFunc::create(this, callfunc_selector(HUD::clearTextOnBoard)),
+			NULL
+		)
+	);
+}
+
+
+void HUD::changeTextOnBoard(cocos2d::String newText)
+{
+	if (!isTextBoardShowing || !text)
+	{
+		return;
+	}
+
+
+}
+
+
+void HUD::clearTextOnBoard()
+{
+	if (text)
+	{
+		text->setText("");
+	}
 }
 
 
@@ -127,6 +165,17 @@ void HUD::loadTextBoard()
 	// make text board invisible
 	isTextBoardShowing = false;
 	textBoard->setScaleY(0.0F);
+
+	// create empty Text
+	text = cocos2d::ui::Text::create("", "fonts/Schoolbook.ttf", 30);
+	text->setAnchorPoint(cocos2d::Vec2(0.0F, 0.0F));
+	text->setTextHorizontalAlignment(cocos2d::TextHAlignment::LEFT);
+	text->setTextVerticalAlignment(cocos2d::TextVAlignment::TOP);
+	text->ignoreContentAdaptWithSize(false);
+	text->setTextAreaSize(cocos2d::Size(textBoard->getContentSize().width - TEXT_PADDING_ON_BOARD * 2, textBoard->getContentSize().height - TEXT_PADDING_ON_BOARD * 2));
+	text->setPositionX(text->getPositionX() + TEXT_PADDING_ON_BOARD);
+
+	textBoard->addChild(text);
 
 	this->addChild(textBoard);
 }

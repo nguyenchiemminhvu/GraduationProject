@@ -61,8 +61,6 @@ bool GameScene::init()
 	
 	if (!initContactListener())
 		return false;
-	
-	hud->showTextBoard("Hello mother fucker");
 
 	return true;
 }
