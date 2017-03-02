@@ -6,13 +6,13 @@
 #include "cocos2d.h"
 #include "ui\CocosGUI.h"
 
-class HUD : public cocos2d::LayerColor
+class HUD : public cocos2d::Layer
 {
 public:
 
-	static HUD* createLayer(cocos2d::Layer *parent);
+	static HUD* createLayer();
 
-	HUD(cocos2d::Layer *parent);
+	HUD();
 	virtual ~HUD();
 
 	virtual void update(float dt);
@@ -30,8 +30,6 @@ private:
 
 	cocos2d::Vec2 origin;
 	cocos2d::Size visibleSize;
-
-	cocos2d::Layer *parentLayer;
 
 	bool isArrowShowing;
 	cocos2d::Sprite *arrow;

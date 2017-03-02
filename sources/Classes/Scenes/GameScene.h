@@ -42,6 +42,8 @@ private:
 	cocos2d::Vec2 origin;
 	cocos2d::Size visibleSize;
 
+	cocos2d::Scene *currentGameScene;
+
 	MainCharacter *mainCharacter;
 	EnemyFactory *enemyFactory;
 

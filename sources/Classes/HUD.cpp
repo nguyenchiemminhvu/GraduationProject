@@ -1,28 +1,24 @@
 #include "HUD.h"
+#include "Definition.h"
 
 #define TEXT_PADDING_ON_BOARD 10.0F
 
 
-HUD * HUD::createLayer(cocos2d::Layer *parent)
+HUD * HUD::createLayer()
 {
-	HUD *hud = new HUD(parent);
-	hud->create();
+	HUD *hud = new HUD();
 	hud->init();
 	hud->autorelease();
-	hud->setColor(cocos2d::Color3B::BLACK);
-	
-	hud->initComponents();
 
-	hud->parentLayer->addChild(hud);
+	hud->initComponents();
 
 	return hud;
 }
 
 
-HUD::HUD(cocos2d::Layer *parent)
-	: parentLayer(parent)
+HUD::HUD()
 {
-	
+
 }
 
 
@@ -103,12 +99,7 @@ void HUD::hideTextBoard()
 
 void HUD::changeTextOnBoard(cocos2d::String newText)
 {
-	if (!isTextBoardShowing || !text)
-	{
-		return;
-	}
-
-
+	showTextBoard(newText);
 }
 
 
@@ -126,8 +117,8 @@ void HUD::initComponents()
 	origin = cocos2d::Director::getInstance()->getVisibleOrigin();
 	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
-	loadArrow();
 	loadTextBoard();
+	loadArrow();
 }
 
 

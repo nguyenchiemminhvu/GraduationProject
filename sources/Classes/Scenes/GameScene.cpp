@@ -17,7 +17,9 @@ cocos2d::Scene* GameScene::createScene()
 #endif
 
 	auto layer = GameScene::create();
-	scene->addChild(layer);
+	scene->addChild(layer, (int)ZOrderLayer::LAYER_1);
+	layer->currentGameScene = scene;
+
 	return scene;
 }
 
@@ -61,6 +63,9 @@ bool GameScene::init()
 	
 	if (!initContactListener())
 		return false;
+
+	hud->showArrow(startPos);
+	hud->showTextBoard("This is a sample text.");
 
 	return true;
 }
@@ -201,12 +206,9 @@ bool GameScene::initUI()
 
 bool GameScene::initHUD()
 {
-	hud = HUD::createLayer(this);
-	
-	if (!hud)
-	{
-		return false;
-	}
+	// create hud cause game scene freeze on android device???
+	hud = HUD::createLayer();
+	this->addChild(hud);
 
 	return true;
 }
