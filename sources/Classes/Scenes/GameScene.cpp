@@ -69,7 +69,7 @@ bool GameScene::init()
 	if (!initContactListener())
 		return false;
 
-	hud->showArrow(buttonRun->getPosition(), 60.0F, false);
+	instructor->showInstruction(Instruction::InstructionStep::SAY_HELLO);
 
 	return true;
 }

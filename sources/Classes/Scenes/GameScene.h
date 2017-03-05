@@ -71,7 +71,7 @@ private:
 
 	/////////////////////////////////////
 	// path
-
+	
 	bool isTouchedOnMap;
 	bool isPathCompleted;
 	std::vector<cocos2d::Vec2> path;
