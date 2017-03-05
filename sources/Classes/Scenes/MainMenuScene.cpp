@@ -9,7 +9,7 @@ cocos2d::Scene * MainMenu::createScene()
 {
 	auto scene = cocos2d::Scene::create();
 	auto mainMenu = MainMenu::create();
-	scene->addChild(mainMenu);
+	scene->addChild(mainMenu, (int)ZOrderLayer::LAYER_1);
 	return scene;
 }
 

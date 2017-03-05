@@ -1,6 +1,6 @@
 #include "SplashScene.h"
 #include "Scenes\MainMenuScene.h"
-#include "HelloWorldScene.h"
+#include "Definition.h"
 
 
 cocos2d::Scene * SplashScene::createScene()
@@ -8,7 +8,7 @@ cocos2d::Scene * SplashScene::createScene()
 	auto scene = cocos2d::Scene::create();
 	auto splashLayer = SplashScene::create();
 
-	scene->addChild(splashLayer);
+	scene->addChild(splashLayer, (int)ZOrderLayer::LAYER_1);
 	return scene;
 }
 

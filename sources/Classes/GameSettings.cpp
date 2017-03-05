@@ -121,6 +121,24 @@ void GameSettings::onPlayerWinAllLevel()
 }
 
 
+bool GameSettings::isInstructionNeeded()
+{
+	return needInstruction;
+}
+
+
+void GameSettings::enableInstruction()
+{
+	needInstruction = true;
+}
+
+
+void GameSettings::disableInstruction()
+{
+	needInstruction = false;
+}
+
+
 GameSettings::~GameSettings()
 {
 }
@@ -135,4 +153,6 @@ GameSettings::GameSettings()
 	totalLevel = utils::countNumberOfFileWithFormat("tiledmaps/level_%d.tmx");
 	selectedLevel = 0;
 	levelStatus = 1; //enable the first level
+
+	needInstruction = true; //instruction is needed for the first level
 }

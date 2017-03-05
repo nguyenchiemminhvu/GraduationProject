@@ -2,12 +2,14 @@
 #include "Scenes\MainMenuScene.h"
 #include "Player\MainCharacter.h"
 #include "Utility.h"
+#include "Definition.h"
+
 
 cocos2d::Scene * FinishedScene::createScene()
 {
 	auto scene = cocos2d::Scene::create();
 	auto finished = FinishedScene::create();
-	scene->addChild(finished);
+	scene->addChild(finished, (int)ZOrderLayer::LAYER_1);
 	return scene;
 }
 

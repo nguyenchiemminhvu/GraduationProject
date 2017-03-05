@@ -4,6 +4,8 @@
 #include "Scenes\LevelSelectionBoard.h"
 #include "Scenes\FinishedScene.h"
 #include "Toast.h"
+#include "HUD.h"
+#include "Instruction.h"
 
 #include <algorithm>
 
@@ -55,6 +57,9 @@ bool GameScene::init()
 	if (!initHUD())
 		return false;
 
+	if (!initInstruction())
+		return false;
+
 	if (!initEnemies())
 		return false;
 
@@ -64,8 +69,7 @@ bool GameScene::init()
 	if (!initContactListener())
 		return false;
 
-	hud->showArrow(startPos);
-	hud->showTextBoard("This is a sample text.");
+	hud->showArrow(buttonRun->getPosition(), 60.0F, false);
 
 	return true;
 }
@@ -190,15 +194,15 @@ bool GameScene::initUI()
 	buttonGetout->addTouchEventListener(CC_CALLBACK_2(GameScene::onButtonGetoutTouched, this));
 
 
-	auto buttonReady = cocos2d::ui::Button::create("images/UI/game_scene_ui/button_run.png");
-	buttonReady->setPosition(
+	buttonRun = cocos2d::ui::Button::create("images/UI/game_scene_ui/button_run.png");
+	buttonRun->setPosition(
 		cocos2d::Vec2(
-			origin.x + visibleSize.width - buttonReady->getContentSize().width / 1.5F,
-			origin.y + buttonReady->getContentSize().height
+			origin.x + visibleSize.width - buttonRun->getContentSize().width / 1.5F,
+			origin.y + buttonRun->getContentSize().height
 		)
 	);
-	this->addChild(buttonReady);
-	buttonReady->addTouchEventListener(CC_CALLBACK_2(GameScene::onButtonReadyTouched, this));
+	this->addChild(buttonRun);
+	buttonRun->addTouchEventListener(CC_CALLBACK_2(GameScene::onButtonReadyTouched, this));
 
 	return true;
 }
@@ -209,6 +213,23 @@ bool GameScene::initHUD()
 	// create hud cause game scene freeze on android device???
 	hud = HUD::createLayer();
 	this->addChild(hud);
+
+	return true;
+}
+
+
+bool GameScene::initInstruction()
+{
+	instructor = new Instruction(hud, startPos, endPos, buttonRun->getPosition());
+	
+	if (GameSettings::getInstance()->getSelectedLevel() == 1)
+	{
+		GameSettings::getInstance()->enableInstruction();
+	}
+	else
+	{
+		GameSettings::getInstance()->disableInstruction();
+	}
 
 	return true;
 }

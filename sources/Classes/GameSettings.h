@@ -29,6 +29,12 @@ public:
 	bool wonTheGame();
 	void onPlayerWinAllLevel();
 
+	//////////////////////////////////
+	// instruction settings
+	bool isInstructionNeeded();
+	void enableInstruction();
+	void disableInstruction();
+
 	~GameSettings();
 	
 private:
@@ -40,6 +46,8 @@ private:
 	int totalLevel;
 	int selectedLevel;
 	unsigned long long int levelStatus;
+
+	bool needInstruction;
 
 	GameSettings();
 	GameSettings(const GameSettings &other) = delete;

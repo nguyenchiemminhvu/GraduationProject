@@ -1,12 +1,13 @@
 #include "CreditsScene.h"
 #include "Scenes\MainMenuScene.h"
+#include "Definition.h"
 
 
 cocos2d::Scene * Credits::createScene()
 {
 	auto scene = cocos2d::Scene::create();
 	auto credits = Credits::create();
-	scene->addChild(credits);
+	scene->addChild(credits, (int)ZOrderLayer::LAYER_1);
 	return scene;
 }
 

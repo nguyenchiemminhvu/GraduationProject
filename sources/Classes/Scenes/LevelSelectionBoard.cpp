@@ -9,7 +9,7 @@ cocos2d::Scene * LevelSelectionBoard::createScene()
 {
 	auto scene = cocos2d::Scene::create();
 	auto board = LevelSelectionBoard::create();
-	scene->addChild(board);
+	scene->addChild(board, (int)ZOrderLayer::LAYER_1);
 	return scene;
 }
 

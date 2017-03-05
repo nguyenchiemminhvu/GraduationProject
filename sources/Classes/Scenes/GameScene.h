@@ -9,11 +9,12 @@
 #include "Player\MainCharacter.h"
 #include "Enemies\Enemy.h"
 
-#include "HUD.h"
-
 #include <string>
 #include <vector>
 #include <map>
+
+class HUD;
+class Instruction;
 
 
 class GameScene : public cocos2d::Layer {
@@ -42,25 +43,31 @@ private:
 	cocos2d::Vec2 origin;
 	cocos2d::Size visibleSize;
 
-	cocos2d::Scene *currentGameScene;
+	cocos2d::Scene	*currentGameScene;
 
-	MainCharacter *mainCharacter;
-	EnemyFactory *enemyFactory;
+	MainCharacter	*mainCharacter;
+	EnemyFactory	*enemyFactory;
 
-	HUD	*hud;
+	HUD			*hud;
+	Instruction *instructor;
 
 	////////////////////////////////////////
 	// Tiled map properties
 
-	cocos2d::TMXTiledMap *map;
-	cocos2d::TMXLayer *backgroundLayer;
+	cocos2d::TMXTiledMap	*map;
+	cocos2d::TMXLayer		*backgroundLayer;
 	cocos2d::TMXObjectGroup *playerGroup;
 	cocos2d::TMXObjectGroup *enemyGroup;
-	cocos2d::Size mapSize;
-	cocos2d::Size layerSize;
-	cocos2d::Size tileSize;
-	cocos2d::Vec2 startPos;
-	cocos2d::Vec2 endPos;
+	cocos2d::Size			mapSize;
+	cocos2d::Size			layerSize;
+	cocos2d::Size			tileSize;
+	cocos2d::Vec2			startPos;
+	cocos2d::Vec2			endPos;
+
+	//////////////////////////////////////
+	// UI components
+	
+	cocos2d::ui::Button *buttonRun;
 
 	/////////////////////////////////////
 	// path
@@ -88,6 +95,7 @@ private:
 	bool initPath();
 	bool initUI();
 	bool initHUD();
+	bool initInstruction();
 
 	bool initEnemies();
 

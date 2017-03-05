@@ -18,7 +18,7 @@ public:
 	virtual void update(float dt);
 	virtual void draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, bool transformUpdated);
 
-	void showArrow(cocos2d::Vec2 pos);
+	void showArrow(cocos2d::Vec2 pos, float xOffset = 0, bool rightToLeft = true);
 	void hideArrow();
 
 	void showTextBoard(cocos2d::String newText);

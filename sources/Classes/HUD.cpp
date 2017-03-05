@@ -40,10 +40,23 @@ void HUD::draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, bo
 }
 
 
-void HUD::showArrow(cocos2d::Vec2 pos)
+void HUD::showArrow(cocos2d::Vec2 pos, float xOffset, bool rightToLeft)
 {
 	isArrowShowing = true;
-	arrow->setPosition(pos);
+	
+	if (!rightToLeft)
+	{
+		arrow->setFlippedX(true);
+		arrow->setPositionX(pos.x - (arrow->getContentSize().width + xOffset));
+		arrow->setPositionY(pos.y);
+	}
+	else
+	{
+		arrow->setFlippedX(false);
+		arrow->setPositionX(pos.x + (arrow->getContentSize().width + xOffset));
+		arrow->setPositionY(pos.y);
+	}
+
 	arrow->setVisible(true);
 
 	arrow->resumeSchedulerAndActions();
@@ -62,6 +75,12 @@ void HUD::hideArrow()
 
 void HUD::showTextBoard(cocos2d::String newText)
 {
+	if (newText.length() == 0)
+	{
+		hideTextBoard();
+		return;
+	}
+
 	if (isTextBoardShowing)
 	{
 		// clear text on text board and make it invisible
