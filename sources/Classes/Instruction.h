@@ -66,7 +66,6 @@ public:
 	virtual ~Instruction();
 
 	InstructionStep getCurrentStep();
-	void goToNextStep();
 
 	void showSpeed();
 	void showInstruction(InstructionStep step);

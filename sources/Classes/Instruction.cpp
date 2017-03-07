@@ -32,12 +32,6 @@ Instruction::InstructionStep Instruction::getCurrentStep()
 }
 
 
-void Instruction::goToNextStep()
-{
-	
-}
-
-
 void Instruction::showSpeed()
 {
 
@@ -73,7 +67,7 @@ void Instruction::showInstruction(InstructionStep step)
 		guideLines.at(step - 1).xOffset,
 		guideLines.at(step - 1).isRightToLeft
 	);
-
+	cocos2d::log("\n%f %f\n", guideLines.at(step - 1).pointTo.x, guideLines.at(step - 1).pointTo.y);
 }
 
 

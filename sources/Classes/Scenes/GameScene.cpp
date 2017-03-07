@@ -69,7 +69,18 @@ bool GameScene::init()
 	if (!initContactListener())
 		return false;
 
-	instructor->showInstruction(Instruction::InstructionStep::SAY_HELLO);
+	//wait 1 second to load scene then say hello from instructor
+	//keep showing text board in 3 seconds
+	//after that, jump to next instruction
+	this->runAction(
+		cocos2d::Sequence::create(
+			cocos2d::DelayTime::create(1.0F),
+			cocos2d::CallFunc::create(this, callfunc_selector(GameScene::helloFromInstructor)),
+			cocos2d::DelayTime::create(5.0F),
+			cocos2d::CallFunc::create(this, callfunc_selector(GameScene::showInstructionAtStartPos)),
+			NULL
+		)
+	);
 
 	return true;
 }
@@ -295,6 +306,19 @@ bool GameScene::initContactListener()
 
 	return true;
 }
+
+
+void GameScene::helloFromInstructor()
+{
+	instructor->showInstruction(Instruction::InstructionStep::SAY_HELLO);
+}
+
+
+void GameScene::showInstructionAtStartPos()
+{
+	instructor->showInstruction(Instruction::InstructionStep::TOUCH_AT_START_POS);
+}
+
 
 ////////////////////////////////////////////////////////
 // path

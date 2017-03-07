@@ -123,6 +123,13 @@ private:
 
 	void replaceLevelSelectionBoard();
 	void replaceCurrentLevel();
+
+	///////////////////////////////////////
+	// instruction
+	
+	void helloFromInstructor();
+	void showInstructionAtStartPos();
+
 };
 
 #endif // !__GAME_SCENE_H__

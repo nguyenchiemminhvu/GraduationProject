@@ -42,8 +42,11 @@ void HUD::draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, bo
 
 void HUD::showArrow(cocos2d::Vec2 pos, float xOffset, bool rightToLeft)
 {
+	arrow->stopAllActions();
+
 	isArrowShowing = true;
-	
+	arrow->setVisible(true);
+
 	if (!rightToLeft)
 	{
 		arrow->setFlippedX(true);
@@ -57,9 +60,11 @@ void HUD::showArrow(cocos2d::Vec2 pos, float xOffset, bool rightToLeft)
 		arrow->setPositionY(pos.y);
 	}
 
-	arrow->setVisible(true);
-
-	arrow->resumeSchedulerAndActions();
+	// setup arrow sequence action
+	auto moveRight = cocos2d::MoveBy::create(0.5F, cocos2d::Vec2(arrow->getContentSize().width, 0));
+	auto moveLeft = cocos2d::MoveBy::create(0.5F, cocos2d::Vec2(-(arrow->getContentSize().width), 0));
+	auto arrowSequenceAction = cocos2d::Sequence::create(moveRight, moveLeft, NULL);
+	arrow->runAction(cocos2d::RepeatForever::create(arrowSequenceAction));
 }
 
 
@@ -68,8 +73,8 @@ void HUD::hideArrow()
 	isArrowShowing = false;
 	arrow->setPosition(cocos2d::Vec2());
 	arrow->setVisible(false);
-
-	arrow->pauseSchedulerAndActions();
+	
+	arrow->stopAllActions();
 }
 
 
@@ -145,6 +150,7 @@ void HUD::loadArrow()
 {
 	// load arrow texture
 	arrow = cocos2d::Sprite::create("images/instruction/arrow.png");
+	arrow->setPosition(cocos2d::Vec2(0xFFFFFFFF, 0xFFFFFFFF));
 
 	// setup arrow sequence action
 	auto moveRight = cocos2d::MoveBy::create(0.5F, cocos2d::Vec2(arrow->getContentSize().width, 0));
