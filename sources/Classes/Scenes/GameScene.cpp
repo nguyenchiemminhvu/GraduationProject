@@ -339,11 +339,31 @@ bool GameScene::addNodeToPath(cocos2d::Vec2 nextNode)
 		path.push_back(nextNode);
 		pathMap[nextNode]++;
 
+		// show instruction to notice player draw the path carefully
+		if (GameSettings::getInstance()->isInstructionNeeded() && path.size() >= 2)
+		{
+			instructor->showInstruction(Instruction::InstructionStep::DRAW_THE_PATH);
+
+			// specify the end of the path
+			if (GameSettings::getInstance()->isInstructionNeeded() && path.size() >= 10)
+			{
+				instructor->showInstruction(Instruction::InstructionStep::SPECIFY_THE_END_POS);
+			}
+		}
+
 		//////////////////////////////////////////
 		// if the end node has been added into the path
 		// consider that the path is completed
 		if (nextNode == pointToTileCoordinate(endPos))
+		{
 			isPathCompleted = true;
+
+			// after draw a completed path, tell player to use button Run
+			if (GameSettings::getInstance()->isInstructionNeeded())
+			{
+				instructor->showInstruction(Instruction::InstructionStep::USE_BUTTON_RUN);
+			}
+		}
 
 		paintTileNode(nextNode);
 
@@ -497,7 +517,15 @@ void GameScene::onButtonReadyTouched(cocos2d::Ref * ref, cocos2d::ui::Button::To
 		// - first condition  : the path is ready
 		// - second condition : the ball is not started yet
 		if (mainCharacter->ready() && !mainCharacter->isStarted())
+		{
 			mainCharacter->move();
+
+			// after the first run, instruction is no more needed
+			if (GameSettings::getInstance()->isInstructionNeeded())
+			{
+				instructor->showInstruction(Instruction::InstructionStep::FINISHED_INSTRUCTION);
+			}
+		}
 
 		break;
 
@@ -565,7 +593,7 @@ bool GameScene::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * event)
 	// - second condition : player must touch inside map
 	// - third condition  : the path is not completed yet
 	// - fourth condition : player touched on a valid tile node
-	// If one in four conditions is false, reset the path
+	// If one in four conditions is false, do nothing
 	if (isTouchedOnMap && !isPathCompleted && !addNodeToPath(pointToTileCoordinate(touch->getLocation()))) {
 		
 	}
@@ -585,7 +613,7 @@ void GameScene::onTouchMoved(cocos2d::Touch * touch, cocos2d::Event * event)
 	// - first condition  : player must touch inside the map
 	// - second condition : the path is not completed yet
 	// - third condition  : player touched on a valid tile node
-	// If one in three conditions is false, reset the path
+	// If one in three conditions is false, do nothing
 	if (isTouchedOnMap && !isPathCompleted && !addNodeToPath(pointToTileCoordinate(touch->getLocation()))) {
 		
 	}
@@ -600,7 +628,8 @@ void GameScene::onTouchEnded(cocos2d::Touch * touch, cocos2d::Event * event)
 	//////////////////////////////////////////////////
 	// After player stopped touching on the map, 
 	// if the path is still not completed yet,
-	// reset the path
+	// do nothing,
+	// keep the path
 	if (!isPathCompleted) {
 		
 	}

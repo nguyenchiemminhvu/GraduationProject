@@ -108,7 +108,7 @@ void Instruction::initGuideLines()
 			InstructionStep::SPECIFY_THE_END_POS,
 			"Your path must end at the next door.",
 			endPos,
-			0,
+			48,
 			false
 		)
 	);
