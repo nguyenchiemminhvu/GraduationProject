@@ -49,7 +49,6 @@ private:
 	EnemyFactory	*enemyFactory;
 
 	HUD			*hud;
-	Instruction *instructor;
 
 	////////////////////////////////////////
 	// Tiled map properties

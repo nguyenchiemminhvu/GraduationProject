@@ -6,23 +6,59 @@
 #define INFINITE_POINT_TO	(0xFFFFFFFF)
 
 
-Instruction::Instruction(HUD *hud, cocos2d::Vec2 startPos, cocos2d::Vec2 endPos, cocos2d::Vec2 buttonRunPos)
-{
-	this->hud = hud;
-	this->startPos = startPos;
-	this->endPos = endPos;
-	this->buttonRunPos = buttonRunPos;
+Instruction * Instruction::instance = NULL;
 
+Instruction * Instruction::getInstance()
+{
+	if (instance == NULL)
+	{
+		instance = new Instruction();
+	}
+	return instance;
+}
+
+
+void Instruction::destroyInstance()
+{
+	SAFE_DELETE(instance);
+}
+
+
+bool Instruction::hasInstance()
+{
+	return instance != NULL;
+}
+
+
+Instruction::Instruction()
+{
 	origin = cocos2d::Director::getInstance()->getVisibleOrigin();
 	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
-	initGuideLines();
+	isFirstTime = true;
 	currentStep = InstructionStep::NONE;
 }
 
 
 Instruction::~Instruction()
 {
+}
+
+
+void Instruction::loadRequirement(HUD * hud, cocos2d::Vec2 startPos, cocos2d::Vec2 endPos, cocos2d::Vec2 buttonRunPos)
+{
+	this->hud = hud;
+	this->startPos = startPos;
+	this->endPos = endPos;
+	this->buttonRunPos = buttonRunPos;
+
+	initGuideLines();
+}
+
+
+bool Instruction::isShowFirstTime()
+{
+	return isFirstTime;
 }
 
 
@@ -55,6 +91,8 @@ void Instruction::showInstruction(InstructionStep step)
 		return;
 	}
 
+	isFirstTime = false;
+
 	// switch state of the guide line
 	guideLines.at(step - 1).isAlreadyShowed = true;
 	
@@ -67,7 +105,6 @@ void Instruction::showInstruction(InstructionStep step)
 		guideLines.at(step - 1).xOffset,
 		guideLines.at(step - 1).isRightToLeft
 	);
-	cocos2d::log("\n%f %f\n", guideLines.at(step - 1).pointTo.x, guideLines.at(step - 1).pointTo.y);
 }
 
 
@@ -143,7 +180,14 @@ bool Instruction::checkPreCondition(Instruction::InstructionStep step)
 		return true;
 	}
 
-	return false;
+	// check if all steps before was showed
+	for (int i = 0; i < currentStep - 1; i++)
+	{
+		if (!guideLines.at(i).isAlreadyShowed)
+			return false;
+	}
+
+	return true;
 }
 
 

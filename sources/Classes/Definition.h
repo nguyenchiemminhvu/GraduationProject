@@ -7,6 +7,10 @@
 
 #define IS_A(obj, Type)		(dynamic_cast<Type *>(obj) != nullptr)
 
+#define SAFE_DELETE(p)				do { delete (p); (p) = NULL; } while(0);
+#define SAFE_DELETE_ARRAY(p)		do { delete p[]; (p) = NULL; } while(0);
+
+
 enum class GameObjectSize
 {
 	WIDTH = 48,

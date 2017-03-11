@@ -69,18 +69,35 @@ bool GameScene::init()
 	if (!initContactListener())
 		return false;
 
-	//wait 1 second to load scene then say hello from instructor
-	//keep showing text board in 3 seconds
-	//after that, jump to next instruction
-	this->runAction(
-		cocos2d::Sequence::create(
-			cocos2d::DelayTime::create(1.0F),
-			cocos2d::CallFunc::create(this, callfunc_selector(GameScene::helloFromInstructor)),
-			cocos2d::DelayTime::create(5.0F),
-			cocos2d::CallFunc::create(this, callfunc_selector(GameScene::showInstructionAtStartPos)),
-			NULL
-		)
-	);
+	if (GameSettings::getInstance()->isInstructionNeeded())
+	{
+		if (Instruction::getInstance()->isShowFirstTime())
+		{
+			//wait 1 second to load scene then say hello from instructor
+			//keep showing text board in 3 seconds
+			//after that, jump to next instruction
+			this->runAction(
+				cocos2d::Sequence::create(
+					cocos2d::DelayTime::create(1.0F),
+					cocos2d::CallFunc::create(this, callfunc_selector(GameScene::helloFromInstructor)),
+					cocos2d::DelayTime::create(5.0F),
+					cocos2d::CallFunc::create(this, callfunc_selector(GameScene::showInstructionAtStartPos)),
+					NULL
+				)
+			);
+		}
+		else
+		{
+			//wait 1 second to load scene then point to start position
+			this->runAction(
+				cocos2d::Sequence::create(
+					cocos2d::DelayTime::create(1.0F),
+					cocos2d::CallFunc::create(this, callfunc_selector(GameScene::showInstructionAtStartPos)),
+					NULL
+				)
+			);
+		}
+	}
 
 	return true;
 }
@@ -231,7 +248,10 @@ bool GameScene::initHUD()
 
 bool GameScene::initInstruction()
 {
-	instructor = new Instruction(hud, startPos, endPos, buttonRun->getPosition());
+	if (!GameSettings::getInstance()->isInstructionNeeded())
+		return true;
+
+	Instruction::getInstance()->loadRequirement(hud, startPos, endPos, buttonRun->getPosition());
 	
 	if (GameSettings::getInstance()->getSelectedLevel() == 1)
 	{
@@ -310,13 +330,13 @@ bool GameScene::initContactListener()
 
 void GameScene::helloFromInstructor()
 {
-	instructor->showInstruction(Instruction::InstructionStep::SAY_HELLO);
+	Instruction::getInstance()->showInstruction(Instruction::InstructionStep::SAY_HELLO);
 }
 
 
 void GameScene::showInstructionAtStartPos()
 {
-	instructor->showInstruction(Instruction::InstructionStep::TOUCH_AT_START_POS);
+	Instruction::getInstance()->showInstruction(Instruction::InstructionStep::TOUCH_AT_START_POS);
 }
 
 
@@ -342,12 +362,12 @@ bool GameScene::addNodeToPath(cocos2d::Vec2 nextNode)
 		// show instruction to notice player draw the path carefully
 		if (GameSettings::getInstance()->isInstructionNeeded() && path.size() >= 2)
 		{
-			instructor->showInstruction(Instruction::InstructionStep::DRAW_THE_PATH);
+			Instruction::getInstance()->showInstruction(Instruction::InstructionStep::DRAW_THE_PATH);
 
 			// specify the end of the path
 			if (GameSettings::getInstance()->isInstructionNeeded() && path.size() >= 10)
 			{
-				instructor->showInstruction(Instruction::InstructionStep::SPECIFY_THE_END_POS);
+				Instruction::getInstance()->showInstruction(Instruction::InstructionStep::SPECIFY_THE_END_POS);
 			}
 		}
 
@@ -361,7 +381,7 @@ bool GameScene::addNodeToPath(cocos2d::Vec2 nextNode)
 			// after draw a completed path, tell player to use button Run
 			if (GameSettings::getInstance()->isInstructionNeeded())
 			{
-				instructor->showInstruction(Instruction::InstructionStep::USE_BUTTON_RUN);
+				Instruction::getInstance()->showInstruction(Instruction::InstructionStep::USE_BUTTON_RUN);
 			}
 		}
 
@@ -523,7 +543,7 @@ void GameScene::onButtonReadyTouched(cocos2d::Ref * ref, cocos2d::ui::Button::To
 			// after the first run, instruction is no more needed
 			if (GameSettings::getInstance()->isInstructionNeeded())
 			{
-				instructor->showInstruction(Instruction::InstructionStep::FINISHED_INSTRUCTION);
+				Instruction::getInstance()->showInstruction(Instruction::InstructionStep::FINISHED_INSTRUCTION);
 			}
 		}
 

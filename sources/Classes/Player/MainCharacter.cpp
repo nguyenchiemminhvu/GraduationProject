@@ -2,6 +2,7 @@
 #include "Definition.h"
 #include "Scenes\LevelSelectionBoard.h"
 #include "Scenes\FinishedScene.h"
+#include "Instruction.h"
 #include "GameSettings.h"
 #include "Utility.h"
 
@@ -193,6 +194,13 @@ void MainCharacter::onArrived()
 {
 	arrived = true;
 	openNextLevel();
+
+	// Player can pass the first level, so we don't need instruction anymore
+	GameSettings::getInstance()->disableInstruction();
+	if (Instruction::hasInstance())
+	{
+		Instruction::destroyInstance();
+	}
 
 	// On the first time the player win the game (pass all level), 
 	// transition to the finished scene.

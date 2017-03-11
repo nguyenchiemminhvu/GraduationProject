@@ -62,9 +62,17 @@ public:
 		}
 	};
 
-	Instruction(HUD *hud, cocos2d::Vec2 startPos, cocos2d::Vec2 endPos, cocos2d::Vec2 buttonRunPos);
+	////////////////////////////////////////
+	// implement singleton pattern
+	static Instruction* getInstance();
+	static void destroyInstance();
+	static bool hasInstance();
+
 	virtual ~Instruction();
 
+	void loadRequirement(HUD *hud, cocos2d::Vec2 startPos, cocos2d::Vec2 endPos, cocos2d::Vec2 buttonRunPos);
+
+	bool isShowFirstTime();
 	InstructionStep getCurrentStep();
 
 	void showSpeed();
@@ -72,8 +80,12 @@ public:
 
 private:
 
+	static Instruction *instance;
+
 	cocos2d::Vec2 origin;
 	cocos2d::Size visibleSize;
+
+	bool isFirstTime;
 
 	HUD *hud;
 	cocos2d::Vec2 startPos;
@@ -82,6 +94,8 @@ private:
 
 	std::vector<GuideLine>	guideLines;
 	InstructionStep			currentStep;
+
+	Instruction();
 
 	void initGuideLines();
 	
