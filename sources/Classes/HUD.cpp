@@ -1,5 +1,6 @@
 #include "HUD.h"
 #include "Definition.h"
+#include "Utility.h"
 
 #define TEXT_PADDING_ON_BOARD 10.0F
 
@@ -42,8 +43,6 @@ void HUD::draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, bo
 
 void HUD::showArrow(cocos2d::Vec2 pos, float xOffset, bool rightToLeft)
 {
-	arrow->stopAllActions();
-
 	isArrowShowing = true;
 	arrow->setVisible(true);
 
@@ -59,22 +58,14 @@ void HUD::showArrow(cocos2d::Vec2 pos, float xOffset, bool rightToLeft)
 		arrow->setPositionX(pos.x + (arrow->getContentSize().width + xOffset));
 		arrow->setPositionY(pos.y);
 	}
-
-	// setup arrow sequence action
-	auto moveRight = cocos2d::MoveBy::create(0.5F, cocos2d::Vec2(arrow->getContentSize().width, 0));
-	auto moveLeft = cocos2d::MoveBy::create(0.5F, cocos2d::Vec2(-(arrow->getContentSize().width), 0));
-	auto arrowSequenceAction = cocos2d::Sequence::create(moveRight, moveLeft, NULL);
-	arrow->runAction(cocos2d::RepeatForever::create(arrowSequenceAction));
 }
 
 
 void HUD::hideArrow()
 {
 	isArrowShowing = false;
-	arrow->setPosition(cocos2d::Vec2());
+	arrow->setPosition(cocos2d::Vec2(0xFFFFFFFF, 0xFFFFFFFF));
 	arrow->setVisible(false);
-	
-	arrow->stopAllActions();
 }
 
 
@@ -149,14 +140,24 @@ void HUD::initComponents()
 void HUD::loadArrow()
 {
 	// load arrow texture
-	arrow = cocos2d::Sprite::create("images/instruction/arrow.png");
+	arrow = cocos2d::Sprite::create("images/instruction/arrow_1.png");
 	arrow->setPosition(cocos2d::Vec2(0xFFFFFFFF, 0xFFFFFFFF));
 
-	// setup arrow sequence action
-	auto moveRight = cocos2d::MoveBy::create(0.5F, cocos2d::Vec2(arrow->getContentSize().width, 0));
-	auto moveLeft = cocos2d::MoveBy::create(0.5F, cocos2d::Vec2(-(arrow->getContentSize().width), 0));
-	auto arrowSequenceAction = cocos2d::Sequence::create(moveRight, moveLeft, NULL);
-	arrow->runAction(cocos2d::RepeatForever::create(arrowSequenceAction));
+	// setup arrow animation
+	cocos2d::Vector<cocos2d::SpriteFrame *> frames;
+
+	int numOfFrames = utils::countNumberOfFileWithFormat("images/instruction/arrow_%d.png");
+	for (int i = 1; i <= numOfFrames; i++)
+	{
+		auto fileName = cocos2d::String::createWithFormat("images/instruction/arrow_%d.png", i);
+		auto sprite = cocos2d::Sprite::create(fileName->getCString());
+		auto frame = cocos2d::SpriteFrame::create(fileName->getCString(), cocos2d::Rect(cocos2d::Vec2(0, 0), sprite->getContentSize()));
+		frames.pushBack(frame);
+	}
+	
+	auto animation = cocos2d::Animation::createWithSpriteFrames(frames, (1.0F / 60.0F) * 6);
+	auto animate = cocos2d::Animate::create(animation);
+	arrow->runAction(cocos2d::RepeatForever::create(animate));
 
 	// make arrow invisible
 	hideArrow();

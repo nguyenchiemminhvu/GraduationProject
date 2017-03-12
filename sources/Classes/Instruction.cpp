@@ -145,7 +145,7 @@ void Instruction::initGuideLines()
 			InstructionStep::SPECIFY_THE_END_POS,
 			"Your path must end at the next door.",
 			endPos,
-			48,
+			0,
 			false
 		)
 	);
@@ -156,7 +156,7 @@ void Instruction::initGuideLines()
 			InstructionStep::USE_BUTTON_RUN,
 			"Now, hold the button Run then release to go!",
 			buttonRunPos,
-			60.0F,
+			30.0F,
 			false
 		)
 	);
