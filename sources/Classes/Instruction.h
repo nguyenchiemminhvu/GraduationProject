@@ -78,6 +78,7 @@ public:
 	InstructionStep getCurrentStep();
 
 	void showSpeed();
+	void hideSpeed();
 	void showInstruction(InstructionStep step);
 
 private:

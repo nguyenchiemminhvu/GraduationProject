@@ -127,6 +127,54 @@ void HUD::clearTextOnBoard()
 }
 
 
+void HUD::loadSpeed(std::map<int, float> speedForHud)
+{
+	this->speedInfo = speedForHud;
+
+	/////////////////////////////////////////////////////
+	// remove unnecessary elements
+
+	if (speedInfo[(int)EnemyTypes::LEFT_RIGHT] != 0)
+	{
+		speedInfo.erase((int)EnemyTypes::UP_DOWN);
+	}
+	else
+	{
+		speedInfo.erase((int)EnemyTypes::LEFT_RIGHT);
+	}
+
+	if (speedInfo[(int)EnemyTypes::OUTSIDE_CLOCKWISE] != 0)
+	{
+		speedInfo.erase((int)EnemyTypes::OUTSIDE_ANTI_CLOCKWISE);
+	}
+	else
+	{
+		speedInfo.erase((int)EnemyTypes::OUTSIDE_CLOCKWISE);
+	}
+
+	if (speedInfo[(int)EnemyTypes::INSIDE_CLOCKWISE] != 0)
+	{
+		speedInfo.erase((int)EnemyTypes::INSIDE_ANTI_CLOCKWISE);
+	}
+	else
+	{
+		speedInfo.erase((int)EnemyTypes::INSIDE_CLOCKWISE);
+	}
+}
+
+
+void HUD::showSpeed()
+{
+
+}
+
+
+void HUD::hideSpeed()
+{
+
+}
+
+
 void HUD::initComponents()
 {
 	origin = cocos2d::Director::getInstance()->getVisibleOrigin();

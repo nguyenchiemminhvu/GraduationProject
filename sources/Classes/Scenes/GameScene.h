@@ -48,7 +48,8 @@ private:
 	MainCharacter	*mainCharacter;
 	EnemyFactory	*enemyFactory;
 
-	HUD			*hud;
+	HUD						*hud;
+	std::map<int, float>	speedForHud;
 
 	////////////////////////////////////////
 	// Tiled map properties

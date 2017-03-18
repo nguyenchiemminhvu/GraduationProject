@@ -54,13 +54,13 @@ bool GameScene::init()
 	if (!initUI())
 		return false;
 
+	if (!initEnemies())
+		return false;
+
 	if (!initHUD())
 		return false;
 
 	if (!initInstruction())
-		return false;
-
-	if (!initEnemies())
 		return false;
 
 	if (!initTouchOneByOne())
@@ -97,6 +97,10 @@ bool GameScene::init()
 				)
 			);
 		}
+	}
+	else
+	{
+		hud->showSpeed();
 	}
 
 	return true;
@@ -240,6 +244,7 @@ bool GameScene::initHUD()
 {
 	// create hud cause game scene freeze on android device???
 	hud = HUD::createLayer();
+	hud->loadSpeed(speedForHud);
 	this->addChild(hud);
 
 	return true;
@@ -288,7 +293,7 @@ bool GameScene::initEnemies()
 		enemyPos = tileCoordinateToPoint(enemyPos);
 
 		///////////////////////////////////////
-		//get enemy start direction
+		// get enemy start direction
 		int startDirection = 0;
 		if (!properties["start_direction"].isNull())
 			startDirection = properties["start_direction"].asInt();
@@ -300,6 +305,13 @@ bool GameScene::initEnemies()
 			speed = properties["speed"].asFloat();
 
 		enemyFactory->createEnemy(type, this, enemyPos, startDirection, speed);
+
+		////////////////////////////////////////
+		// information for HUD
+		if (speedForHud[type] == 0)
+		{
+			speedForHud[type] = speed;
+		}
 	}
 
 	return true;

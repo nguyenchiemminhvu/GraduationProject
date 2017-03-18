@@ -6,6 +6,8 @@
 #include "cocos2d.h"
 #include "ui\CocosGUI.h"
 
+#include <map>
+
 class HUD : public cocos2d::Layer
 {
 public:
@@ -26,6 +28,10 @@ public:
 	void changeTextOnBoard(cocos2d::String newText);
 	void clearTextOnBoard();
 
+	void loadSpeed(std::map<int, float> speedForHud);
+	void showSpeed();
+	void hideSpeed();
+
 private:
 
 	cocos2d::Vec2 origin;
@@ -37,6 +43,8 @@ private:
 	bool isTextBoardShowing;
 	cocos2d::Sprite *textBoard;
 	cocos2d::ui::Text *text;
+	cocos2d::ui::Layout *speedLayout;
+	std::map<int, float> speedInfo;
 
 	void initComponents();
 	void loadArrow();

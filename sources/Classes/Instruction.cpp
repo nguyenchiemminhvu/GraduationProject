@@ -70,7 +70,13 @@ Instruction::InstructionStep Instruction::getCurrentStep()
 
 void Instruction::showSpeed()
 {
+	hud->showSpeed();
+}
 
+
+void Instruction::hideSpeed()
+{
+	hud->hideSpeed();
 }
 
 
