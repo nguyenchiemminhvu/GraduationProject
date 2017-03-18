@@ -195,6 +195,9 @@ void MainCharacter::onArrived()
 	arrived = true;
 	openNextLevel();
 
+	// In-game instruction is no more needed
+	GameSettings::getInstance()->disableInstruction();
+
 	// Player can pass the first level, so we don't need instruction anymore
 	GameSettings::getInstance()->disableInstruction();
 	if (Instruction::hasInstance())

@@ -125,7 +125,7 @@ void Instruction::initGuideLines()
 	guideLines.push_back(
 		GuideLine(
 			InstructionStep::TOUCH_AT_START_POS,
-			"Touch on main character and draw a path.",
+			"Touch that guy and draw a path!",
 			startPos
 		)
 	);
@@ -134,7 +134,7 @@ void Instruction::initGuideLines()
 	guideLines.push_back(
 		GuideLine(
 			InstructionStep::DRAW_THE_PATH,
-			"Try to choose the right path.\nAvoid those monster!",
+			"Try to avoid monsters!",
 			cocos2d::Vec2(INFINITE_POINT_TO, INFINITE_POINT_TO)
 		)
 	);
@@ -143,7 +143,7 @@ void Instruction::initGuideLines()
 	guideLines.push_back(
 		GuideLine(
 			InstructionStep::SPECIFY_THE_END_POS,
-			"Your path must end at the next door.",
+			"The path must end at the next door.",
 			endPos,
 			0,
 			false
@@ -154,10 +154,28 @@ void Instruction::initGuideLines()
 	guideLines.push_back(
 		GuideLine(
 			InstructionStep::USE_BUTTON_RUN,
-			"Now, hold the button Run then release to go!",
+			"Now, hold the button Run! And choose the right time to release.",
 			buttonRunPos,
 			30.0F,
 			false
+		)
+	);
+
+	// good luck
+	guideLines.push_back(
+		GuideLine(
+			InstructionStep::GOOD_LUCK,
+			"Good luck!",
+			cocos2d::Vec2(INFINITE_POINT_TO, INFINITE_POINT_TO)
+		)
+	);
+
+	// when main character dead
+	guideLines.push_back(
+		GuideLine(
+			InstructionStep::MISSION_FAILED,
+			"!!!...",
+			cocos2d::Vec2(INFINITE_POINT_TO, INFINITE_POINT_TO)
 		)
 	);
 

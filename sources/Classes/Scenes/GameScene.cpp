@@ -484,9 +484,10 @@ void GameScene::cleanPathColor()
 
 void GameScene::onMainCharacterDead()
 {
+	Instruction::getInstance()->showInstruction(Instruction::InstructionStep::MISSION_FAILED);
+
 	// load a new game scene with current selected level
 	// TODO: reset the current level to the origin state (avoid dynamic allocate memory)
-
 	this->runAction(
 		cocos2d::Sequence::create(
 			cocos2d::DelayTime::create(2.0F),
@@ -540,10 +541,10 @@ void GameScene::onButtonReadyTouched(cocos2d::Ref * ref, cocos2d::ui::Button::To
 		{
 			mainCharacter->move();
 
-			// after the first run, instruction is no more needed
+			// after the first run, good luck for player
 			if (GameSettings::getInstance()->isInstructionNeeded())
 			{
-				Instruction::getInstance()->showInstruction(Instruction::InstructionStep::FINISHED_INSTRUCTION);
+				Instruction::getInstance()->showInstruction(Instruction::InstructionStep::GOOD_LUCK);
 			}
 		}
 

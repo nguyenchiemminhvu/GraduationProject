@@ -184,7 +184,7 @@ void HUD::loadTextBoard()
 	textBoard->setScaleY(0.0F);
 
 	// create empty Text
-	text = cocos2d::ui::Text::create("", "fonts/Schoolbook.ttf", 30);
+	text = cocos2d::ui::Text::create("", "fonts/gt-pressura-regular.ttf", 30);
 	text->setAnchorPoint(cocos2d::Vec2(0.0F, 0.0F));
 	text->setTextHorizontalAlignment(cocos2d::TextHAlignment::LEFT);
 	text->setTextVerticalAlignment(cocos2d::TextVAlignment::TOP);
