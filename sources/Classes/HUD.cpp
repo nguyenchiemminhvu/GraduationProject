@@ -209,7 +209,7 @@ void HUD::loadSpeed(std::map<int, float> speedForHud)
 	multiplication->setLayoutParameter(layoutRowParam);
 	mcSpeedLayout->addChild(multiplication);
 
-	auto speedValue = cocos2d::ui::Text::create(std::to_string(MAIN_CHARACTER_BASE_SPEED), "fonts/gt-pressura-regular.ttf", 30);
+	auto speedValue = cocos2d::ui::Text::create((cocos2d::String::createWithFormat("%.2f", MAIN_CHARACTER_BASE_SPEED))->getCString(), "fonts/gt-pressura-regular.ttf", 30);
 	speedValue->setLayoutParameter(layoutRowParam);
 	mcSpeedLayout->addChild(speedValue);
 
@@ -248,7 +248,7 @@ void HUD::loadSpeed(std::map<int, float> speedForHud)
 		multiplication->setLayoutParameter(layoutRowParam);
 		monsterSpeed->addChild(multiplication);
 
-		auto speedValue = cocos2d::ui::Text::create(std::to_string((*iter).second), "fonts/gt-pressura-regular.ttf", 30);
+		auto speedValue = cocos2d::ui::Text::create((cocos2d::String::createWithFormat("%.2f", (*iter).second))->getCString(), "fonts/gt-pressura-regular.ttf", 30);
 		speedValue->setLayoutParameter(layoutRowParam);
 		monsterSpeed->addChild(speedValue);
 
