@@ -160,6 +160,100 @@ void HUD::loadSpeed(std::map<int, float> speedForHud)
 	{
 		speedInfo.erase((int)EnemyTypes::INSIDE_CLOCKWISE);
 	}
+
+	//////////////////////////////////////////////////////
+	// init layout to show speed info
+
+	speedLayout = cocos2d::ui::Layout::create();
+	speedLayout->setLayoutType(cocos2d::ui::Layout::Type::VERTICAL);
+	speedLayout->setBackGroundColorType(cocos2d::ui::LayoutBackGroundColorType::NONE);
+	speedLayout->setContentSize(cocos2d::Size(textBoard->getContentSize().width, textBoard->getContentSize().height));
+	speedLayout->setAnchorPoint(cocos2d::Vec2(0.5F, 1.0F));
+	speedLayout->setPosition(
+		cocos2d::Vec2(
+			textBoard->getPositionX(),
+			textBoard->getPositionY() + textBoard->getContentSize().height / 2
+		)
+	);
+	textBoard->getParent()->addChild(speedLayout);
+
+	auto layoutColumnParam = cocos2d::ui::LinearLayoutParameter::create();
+	layoutColumnParam->setGravity(cocos2d::ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL);
+	layoutColumnParam->setMargin(cocos2d::ui::Margin(0, 20, 0, 30));
+
+	auto layoutCollumnParam2 = cocos2d::ui::LinearLayoutParameter::create();
+	layoutCollumnParam2->setGravity(cocos2d::ui::LinearLayoutParameter::LinearGravity::LEFT);
+	layoutCollumnParam2->setMargin(cocos2d::ui::Margin(10, 0, 0, 60));
+
+	auto layoutRowParam = cocos2d::ui::LinearLayoutParameter::create();
+	layoutRowParam->setGravity(cocos2d::ui::LinearLayoutParameter::LinearGravity::CENTER_VERTICAL);
+	layoutRowParam->setMargin(cocos2d::ui::Margin(10, 10, 10, 10));
+
+	/////////////////////////////////////////////////////
+	// add speed text first
+	auto speedText = cocos2d::ui::ImageView::create("images/instruction/speed_text.png");
+	speedText->setLayoutParameter(layoutColumnParam);
+	speedLayout->addChild(speedText);
+
+	/////////////////////////////////////////////////////
+	// add main character speed
+	auto mcSpeedLayout = cocos2d::ui::Layout::create();
+	mcSpeedLayout->setLayoutParameter(layoutCollumnParam2);
+	mcSpeedLayout->setLayoutType(cocos2d::ui::Layout::Type::HORIZONTAL);
+
+	auto mcSprite = cocos2d::ui::ImageView::create("images/main_character/main_character_idle_1.png");
+	mcSprite->setLayoutParameter(layoutRowParam);
+	mcSpeedLayout->addChild(mcSprite);
+
+	auto multiplication = cocos2d::ui::Text::create(" x ", "fonts/gt-pressura-regular.ttf", 30);
+	multiplication->setLayoutParameter(layoutRowParam);
+	mcSpeedLayout->addChild(multiplication);
+
+	auto speedValue = cocos2d::ui::Text::create(std::to_string(MAIN_CHARACTER_BASE_SPEED), "fonts/gt-pressura-regular.ttf", 30);
+	speedValue->setLayoutParameter(layoutRowParam);
+	mcSpeedLayout->addChild(speedValue);
+
+	speedLayout->addChild(mcSpeedLayout);
+
+	/////////////////////////////////////////////////////
+	// finally add list of speed of monsters
+	std::map<int, float>::iterator iter;
+	for (iter = speedInfo.begin(); iter != speedInfo.end(); iter++)
+	{
+		auto monsterSpeed = cocos2d::ui::Layout::create();
+		monsterSpeed->setLayoutParameter(layoutCollumnParam2);
+		monsterSpeed->setLayoutType(cocos2d::ui::Layout::Type::HORIZONTAL);
+		
+		cocos2d::ui::ImageView *monsterSprite = nullptr;
+		if ((*iter).first == (int)EnemyTypes::LEFT_RIGHT || 
+			(*iter).first == (int)EnemyTypes::UP_DOWN)
+		{
+			monsterSprite = cocos2d::ui::ImageView::create("images/enemies/type1or2/obstacle_speed.png");
+		}
+		else if ((*iter).first == (int)EnemyTypes::OUTSIDE_CLOCKWISE ||
+				(*iter).first == (int)EnemyTypes::OUTSIDE_ANTI_CLOCKWISE)
+		{
+			monsterSprite = cocos2d::ui::ImageView::create("images/enemies/type3or4/obstacle_speed.png");
+		}
+		else if ((*iter).first == (int)EnemyTypes::INSIDE_CLOCKWISE ||
+				(*iter).first == (int)EnemyTypes::INSIDE_ANTI_CLOCKWISE)
+		{
+			monsterSprite = cocos2d::ui::ImageView::create("images/enemies/type5or6/obstacle_speed.png");
+		}
+
+		monsterSprite->setLayoutParameter(layoutRowParam);
+		monsterSpeed->addChild(monsterSprite);
+
+		auto multiplication = cocos2d::ui::Text::create(" x ", "fonts/gt-pressura-regular.ttf", 30);
+		multiplication->setLayoutParameter(layoutRowParam);
+		monsterSpeed->addChild(multiplication);
+
+		auto speedValue = cocos2d::ui::Text::create(std::to_string((*iter).second), "fonts/gt-pressura-regular.ttf", 30);
+		speedValue->setLayoutParameter(layoutRowParam);
+		monsterSpeed->addChild(speedValue);
+
+		speedLayout->addChild(monsterSpeed);
+	}
 }
 
 

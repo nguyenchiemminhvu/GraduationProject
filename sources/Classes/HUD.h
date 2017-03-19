@@ -40,11 +40,12 @@ private:
 	bool isArrowShowing;
 	cocos2d::Sprite *arrow;
 
-	bool isTextBoardShowing;
-	cocos2d::Sprite *textBoard;
-	cocos2d::ui::Text *text;
-	cocos2d::ui::Layout *speedLayout;
-	std::map<int, float> speedInfo;
+	bool					isTextBoardShowing;
+	cocos2d::Sprite			*textBoard;
+	cocos2d::ui::Text		*text;
+	cocos2d::ui::Layout		*speedLayout;
+	cocos2d::Sprite			*speedText;
+	std::map<int, float>	speedInfo;
 
 	void initComponents();
 	void loadArrow();

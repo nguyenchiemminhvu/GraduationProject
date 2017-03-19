@@ -609,7 +609,6 @@ bool GameScene::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * event)
 	/////////////////////////////////////////////////////
 	// the path reach to the end but player want to change the path
 	if (isPathCompleted) {
-		resetPath();
 		isTouchedOnMap = true;
 	}
 

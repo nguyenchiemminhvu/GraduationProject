@@ -5,6 +5,8 @@
 #define MOVEMENT_DURATION_BETWEEN_TWO_NODE 0.25F
 #define OPEN_NEXT_LEVEL_DURATION 1.0F
 
+#define MAIN_CHARACTER_BASE_SPEED 2.0F
+
 #define IS_A(obj, Type)		(dynamic_cast<Type *>(obj) != nullptr)
 
 #define SAFE_DELETE(p)				do { delete (p); (p) = NULL; } while(0);
