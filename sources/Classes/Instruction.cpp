@@ -105,6 +105,14 @@ void Instruction::showInstruction(InstructionStep step)
 	// jump to next step
 	currentStep = step;
 
+	// special case
+	if (step == InstructionStep::DRAW_THE_PATH)
+	{
+		hud->showArrowPointToTextBoard();
+		hud->showSpeed();
+		return;
+	}
+
 	hud->showTextBoard(guideLines.at(step - 1).guideText);
 	hud->showArrow(
 		guideLines.at(step - 1).pointTo, 

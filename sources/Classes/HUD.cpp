@@ -61,6 +61,17 @@ void HUD::showArrow(cocos2d::Vec2 pos, float xOffset, bool rightToLeft)
 }
 
 
+void HUD::showArrowPointToTextBoard()
+{
+	isArrowShowing = true;
+	arrow->setVisible(true);
+
+	arrow->setFlippedX(true);
+	arrow->setPositionX(textBoard->getPositionX() - textBoard->getContentSize().width / 2 - arrow->getContentSize().width / 2);
+	arrow->setPositionY(textBoard->getPositionY() + textBoard->getContentSize().height / 2 - arrow->getContentSize().height);
+}
+
+
 void HUD::hideArrow()
 {
 	isArrowShowing = false;
@@ -83,12 +94,13 @@ void HUD::showTextBoard(cocos2d::String newText)
 		textBoard->setScaleY(0.0F);
 		if (text)
 		{
-			text->setText("");
+			text->setString("");
 		}
 	}
 
 	isTextBoardShowing = true;
-	text->setText(newText.getCString());
+	setSpeedInvisible();
+	text->setString(newText.getCString());
 
 	// setup scale up action
 	auto scaleUp = cocos2d::ScaleTo::create(0.3F, 1.0F, 1.0F);
@@ -106,6 +118,7 @@ void HUD::hideTextBoard()
 		cocos2d::Sequence::create(
 			scaleDown,
 			cocos2d::CallFunc::create(this, callfunc_selector(HUD::clearTextOnBoard)),
+			cocos2d::CallFunc::create(this, callfunc_selector(HUD::setSpeedInvisible)),
 			NULL
 		)
 	);
@@ -122,7 +135,7 @@ void HUD::clearTextOnBoard()
 {
 	if (text)
 	{
-		text->setText("");
+		text->setString("");
 	}
 }
 
@@ -168,14 +181,8 @@ void HUD::loadSpeed(std::map<int, float> speedForHud)
 	speedLayout->setLayoutType(cocos2d::ui::Layout::Type::VERTICAL);
 	speedLayout->setBackGroundColorType(cocos2d::ui::LayoutBackGroundColorType::NONE);
 	speedLayout->setContentSize(cocos2d::Size(textBoard->getContentSize().width, textBoard->getContentSize().height));
-	speedLayout->setAnchorPoint(cocos2d::Vec2(0.5F, 1.0F));
-	speedLayout->setPosition(
-		cocos2d::Vec2(
-			textBoard->getPositionX(),
-			textBoard->getPositionY() + textBoard->getContentSize().height / 2
-		)
-	);
-	textBoard->getParent()->addChild(speedLayout);
+	speedLayout->setAnchorPoint(cocos2d::Vec2(0.0F, 0.0F));
+	textBoard->addChild(speedLayout);
 
 	auto layoutColumnParam = cocos2d::ui::LinearLayoutParameter::create();
 	layoutColumnParam->setGravity(cocos2d::ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL);
@@ -254,18 +261,53 @@ void HUD::loadSpeed(std::map<int, float> speedForHud)
 
 		speedLayout->addChild(monsterSpeed);
 	}
+
+	//////////////////////////////////////////////////
+	// set speed board invisible
+	setSpeedInvisible();
 }
 
 
 void HUD::showSpeed()
 {
+	if (isTextBoardShowing)
+	{
+		// clear text on text board and make it invisible
+		textBoard->setScaleY(0.0F);
+		if (text)
+		{
+			text->setString("");
+		}
+	}
 
+	isTextBoardShowing = true;
+	text->setString("");
+
+	// setup scale up action
+	auto scaleUp = cocos2d::ScaleTo::create(0.3F, 1.0F, 1.0F);
+	textBoard->runAction(
+		cocos2d::Sequence::create(
+			cocos2d::CallFunc::create(this, callfunc_selector(HUD::setSpeedVisible)),
+			scaleUp,
+			NULL
+		)
+	);
 }
 
 
 void HUD::hideSpeed()
 {
+	isTextBoardShowing = false;
 
+	// setup scale down action
+	auto scaleDown = cocos2d::ScaleTo::create(0.3F, 1.0F, 0.0F);
+	textBoard->runAction(
+		cocos2d::Sequence::create(
+			scaleDown,
+			cocos2d::CallFunc::create(this, callfunc_selector(HUD::setSpeedInvisible)),
+			NULL
+		)
+	);
 }
 
 
@@ -337,4 +379,16 @@ void HUD::loadTextBoard()
 	textBoard->addChild(text);
 
 	this->addChild(textBoard);
+}
+
+
+void HUD::setSpeedVisible()
+{
+	speedLayout->setVisible(true);
+}
+
+
+void HUD::setSpeedInvisible()
+{
+	speedLayout->setVisible(false);
 }

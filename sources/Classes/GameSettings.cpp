@@ -1,5 +1,6 @@
 #include "cocos2d.h"
 #include "GameSettings.h"
+#include "Instruction.h"
 #include "Utility.h"
 #include "Definition.h"
 

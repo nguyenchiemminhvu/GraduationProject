@@ -21,6 +21,7 @@ public:
 	virtual void draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, bool transformUpdated);
 
 	void showArrow(cocos2d::Vec2 pos, float xOffset = 0, bool rightToLeft = true);
+	void showArrowPointToTextBoard();
 	void hideArrow();
 
 	void showTextBoard(cocos2d::String newText);
@@ -51,6 +52,8 @@ private:
 	void loadArrow();
 	void loadTextBoard();
 
+	void setSpeedVisible();
+	void setSpeedInvisible();
 };
 
 #endif // !__HUD_H__
