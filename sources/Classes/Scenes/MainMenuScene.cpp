@@ -1,8 +1,13 @@
 #include "MainMenuScene.h"
+#include "Toast.h"
 #include "GameSettings.h"
 #include "Definition.h"
 #include "Scenes\CreditsScene.h"
 #include "Scenes\LevelSelectionBoard.h"
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#include "pluginfacebook\PluginFacebook.h"
+#endif
 
 
 cocos2d::Scene * MainMenu::createScene()
@@ -151,6 +156,11 @@ void MainMenu::onSoundEffectStateChanged(cocos2d::Ref * ref, cocos2d::ui::CheckB
 
 void MainMenu::onButtonFacebookTouched(cocos2d::Ref * ref, cocos2d::ui::Button::TouchEventType type)
 {
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	sdkbox::FBShareInfo info;
+#endif
+
 	switch (type)
 	{
 	case cocos2d::ui::Widget::TouchEventType::BEGAN:
@@ -164,7 +174,27 @@ void MainMenu::onButtonFacebookTouched(cocos2d::Ref * ref, cocos2d::ui::Button::
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
 		//////////////////////////////////////////////
 		// share game on facebook
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+		// request permission from user
+		sdkbox::PluginFacebook::requestReadPermissions({ sdkbox::FB_PERM_READ_PUBLIC_PROFILE, sdkbox::FB_PERM_READ_USER_FRIENDS });
+		sdkbox::PluginFacebook::requestPublishPermissions({ sdkbox::FB_PERM_PUBLISH_POST });
 
+		// check if user isn't logged in yet
+		if (!sdkbox::PluginFacebook::isLoggedIn())
+		{
+			sdkbox::PluginFacebook::login();
+		}
+
+		// share content
+		info.type = sdkbox::FB_LINK;
+		info.link = "http://www.cocos2d-x.org";
+		info.title = "cocos2d-x";
+		info.text = "Great 2D Game Engine";
+		info.image = "http://cocos2d-x.org/images/logo.png";
+		sdkbox::PluginFacebook::share(info);
+#else
+		Toast::displayToast(this, "This feature is not implemented on this OS!", 2.0F);
+#endif
 		break;
 
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:
