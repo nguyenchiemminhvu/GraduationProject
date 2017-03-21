@@ -192,10 +192,8 @@ void MainMenu::onButtonFacebookTouched(cocos2d::Ref * ref, cocos2d::ui::Button::
 		info.text = "Great 2D Game Engine";
 		info.image = "http://cocos2d-x.org/images/logo.png";
 		sdkbox::PluginFacebook::share(info);
-
-		Toast::displayToast(this, "Share successfully!", 2.0F);
 #else
-		Toast::displayToast(this, "This feature is not implemented on this OS!", 2.0F);
+		Toast::displayToast(this, "This feature is not implemented on this OS yet!", 2.0F);
 #endif
 		break;
 

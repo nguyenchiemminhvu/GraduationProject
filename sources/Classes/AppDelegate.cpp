@@ -3,6 +3,7 @@
 #include "HelloWorldScene.h"
 #include "Scenes\SplashScene.h"
 #include "GameSettings.h"
+#include "SoundManager.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "pluginfacebook\PluginFacebook.h"
@@ -85,8 +86,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	// run
 	director->runWithScene(scene);
 
-	// preload sound effects
-	
+	// init sound manager
+	SoundManager::getInstance();
 
 	//settings
 	GameSettings::getInstance()->load();
@@ -99,7 +100,7 @@ void AppDelegate::applicationDidEnterBackground() {
 	Director::getInstance()->stopAnimation();
 
 	// if you use SimpleAudioEngine, it must be pause
-	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+	SoundManager::getInstance()->pauseMusic();
 }
 
 // this function will be called when the app is active again
@@ -107,5 +108,5 @@ void AppDelegate::applicationWillEnterForeground() {
 	Director::getInstance()->startAnimation();
 
 	// if you use SimpleAudioEngine, it must resume here
-	CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+	SoundManager::getInstance()->resumeMusic();
 }
