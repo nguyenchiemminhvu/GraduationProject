@@ -3,6 +3,7 @@
 #include "Player\MainCharacter.h"
 #include "Utility.h"
 #include "Definition.h"
+#include "SoundManager.h"
 
 
 cocos2d::Scene * FinishedScene::createScene()
@@ -36,6 +37,8 @@ bool FinishedScene::init()
 	initCredits();
 	initSequenceAction();
 	initKeyEventListener();
+
+	SoundManager::getInstance()->playEndGameMusic();
 
 	return true;
 }

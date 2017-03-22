@@ -6,8 +6,10 @@
 #include "Toast.h"
 #include "HUD.h"
 #include "Instruction.h"
+#include "SoundManager.h"
 
 #include <algorithm>
+
 
 cocos2d::Scene* GameScene::createScene()
 {
@@ -68,6 +70,11 @@ bool GameScene::init()
 	
 	if (!initContactListener())
 		return false;
+	
+	if (!GameSettings::getInstance()->isLevelReset())
+	{
+		SoundManager::getInstance()->playBackgroundMusic();
+	}
 
 	if (GameSettings::getInstance()->isInstructionNeeded())
 	{
@@ -521,6 +528,7 @@ void GameScene::onButtonGetoutTouched(cocos2d::Ref * ref, cocos2d::ui::Button::T
 		break;
 
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
+		SoundManager::getInstance()->stopMusic();
 		replaceLevelSelectionBoard();
 		break;
 
@@ -770,6 +778,8 @@ void GameScene::replaceLevelSelectionBoard()
 
 void GameScene::replaceCurrentLevel()
 {
+	GameSettings::getInstance()->resetCurrentLevel();
+
 	auto currentLevel = GameScene::createScene();
 	cocos2d::Director::getInstance()->replaceScene(currentLevel);
 }

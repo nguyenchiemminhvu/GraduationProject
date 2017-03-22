@@ -4,6 +4,8 @@
 #include "Definition.h"
 #include "Scenes\CreditsScene.h"
 #include "Scenes\LevelSelectionBoard.h"
+#include "SoundManager.h"
+
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "pluginfacebook\PluginFacebook.h"
@@ -29,6 +31,8 @@ bool MainMenu::init()
 
 	initBackground();
 	initButtons();
+
+	SoundManager::getInstance()->playIntroMusic();
 
 	return true;
 }

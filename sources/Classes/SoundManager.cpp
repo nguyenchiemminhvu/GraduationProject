@@ -73,7 +73,7 @@ void SoundManager::playBackgroundMusic()
 	if (GameSettings::getInstance()->isSoundEffectEnabled())
 	{
 		int rand = cocos2d::random(1, 3);
-		cocos2d::String *file = cocos2d::String::createWithFormat("background_%d.png", rand);
+		cocos2d::String *file = cocos2d::String::createWithFormat("sounds/background_%d.mp3", rand);
 		CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(file->getCString(), true);
 	}

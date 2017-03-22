@@ -5,6 +5,7 @@
 #include "Instruction.h"
 #include "GameSettings.h"
 #include "Utility.h"
+#include "SoundManager.h"
 
 
 MainCharacter * MainCharacter::createMainCharacter(cocos2d::Layer * gameLayer, cocos2d::Vec2 initPos)
@@ -238,6 +239,8 @@ void MainCharacter::openNextLevel()
 
 void MainCharacter::backToLevelSelectionBoard()
 {
+	SoundManager::getInstance()->stopMusic();
+
 	auto levelBoard = LevelSelectionBoard::createScene();
 	cocos2d::Director::getInstance()->replaceScene(levelBoard);
 }
@@ -245,6 +248,8 @@ void MainCharacter::backToLevelSelectionBoard()
 
 void MainCharacter::replaceFinishedScene()
 {
+	SoundManager::getInstance()->stopMusic();
+
 	auto finishedScene = FinishedScene::createScene();
 	cocos2d::Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(2.0F, finishedScene));
 }

@@ -23,6 +23,8 @@ public:
 	void disableLevel(int index);
 	void selectLevel(int index);
 	int getSelectedLevel();
+	void resetCurrentLevel();
+	bool isLevelReset();
 	void save();
 	void load();
 	void resetAllLevel();
@@ -39,6 +41,7 @@ public:
 	
 private:
 
+	bool didResetLevel;
 	bool winTheGame;
 
 	bool soundEffectEnabled;

@@ -68,12 +68,25 @@ void GameSettings::selectLevel(int index)
 		return;
 
 	selectedLevel = index;
+	didResetLevel = false;
 }
 
 
 int GameSettings::getSelectedLevel()
 {
 	return selectedLevel;
+}
+
+
+void GameSettings::resetCurrentLevel()
+{
+	didResetLevel = true;
+}
+
+
+bool GameSettings::isLevelReset()
+{
+	return didResetLevel;
 }
 
 
@@ -147,6 +160,7 @@ GameSettings::~GameSettings()
 
 GameSettings::GameSettings()
 {
+	didResetLevel = false;
 	winTheGame = false;
 
 	enableSoundEffect();
