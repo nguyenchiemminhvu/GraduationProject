@@ -13,6 +13,14 @@
 #define SAFE_DELETE_ARRAY(p)		do { delete p[]; (p) = NULL; } while(0);
 
 
+enum class PathDirection
+{
+	UP = 1,
+	DOWN,
+	LEFT,
+	RIGHT
+};
+
 enum class GameObjectSize
 {
 	WIDTH = 48,

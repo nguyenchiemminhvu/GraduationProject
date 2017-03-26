@@ -13,7 +13,6 @@ public:
 
 	virtual ~SoundManager();
 
-	void playIntroMusic();
 	void playStoryMusic();
 	void playBackgroundMusic();
 	void playEndGameMusic();
@@ -26,7 +25,7 @@ private:
 
 	static SoundManager *instance;
 
-	std::string currentMusic;
+	unsigned int currentMusicID;
 
 	SoundManager();
 	void loadMusic();

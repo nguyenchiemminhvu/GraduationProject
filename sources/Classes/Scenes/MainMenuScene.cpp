@@ -31,8 +31,8 @@ bool MainMenu::init()
 
 	initBackground();
 	initButtons();
-
-	SoundManager::getInstance()->playIntroMusic();
+	
+	SoundManager::getInstance()->playStoryMusic();
 
 	return true;
 }
@@ -146,10 +146,12 @@ void MainMenu::onSoundEffectStateChanged(cocos2d::Ref * ref, cocos2d::ui::CheckB
 	{
 	case cocos2d::ui::CheckBox::EventType::SELECTED:
 		GameSettings::getInstance()->enableSoundEffect();
+		SoundManager::getInstance()->resumeMusic();
 		break;
 
 	case cocos2d::ui::CheckBox::EventType::UNSELECTED:
 		GameSettings::getInstance()->disableSoundEffect();
+		SoundManager::getInstance()->pauseMusic();
 		break;
 
 	default:

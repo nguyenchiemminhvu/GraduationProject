@@ -204,6 +204,7 @@ bool GameScene::initMainCharaceter()
 
 bool GameScene::initPath()
 {
+	pathArrows.clear();
 	resetPath();
 
 	return true;
@@ -406,6 +407,32 @@ bool GameScene::addNodeToPath(cocos2d::Vec2 nextNode)
 
 		paintTileNode(nextNode);
 
+		if (path.size() > 1)
+		{
+			// add an arrow on tile node to specify the direction
+			auto arrowSprite = cocos2d::Sprite::create("images/instruction/path_arrow.png");
+			cocos2d::Vec2 arrowPosition = tileCoordinateToPoint(nextNode);
+			arrowSprite->setPosition(arrowPosition);
+			pathArrows.pushBack(arrowSprite);
+
+			if (path.size() > 2)
+			{
+				this->addChild(pathArrows.at(pathArrows.size() - 2), (int)ZOrderLayer::LAYER_1);
+				
+				// rotate the arrow based on previous tile location
+				if (path.at(path.size() - 3).x == path.at(path.size() - 2).x)
+				{
+					// left or right
+
+				}
+				else
+				{
+					// up or down
+
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -452,6 +479,22 @@ void GameScene::resetPath()
 	pathMap.clear();
 
 	mainCharacter->resetPath();
+
+	// clean path arrow
+	cocos2d::Vector<cocos2d::Sprite *>::iterator iter;
+	for (iter = pathArrows.begin(); iter != pathArrows.end(); )
+	{
+		if ((*iter))
+		{
+			(*iter)->removeFromParentAndCleanup(true);
+			iter = pathArrows.erase(iter);
+		}
+		else
+		{
+			iter++;
+		}
+	}
+	pathArrows.clear();
 }
 
 
@@ -463,12 +506,23 @@ void GameScene::clearTheRestOfPath(cocos2d::Vec2 tilePos)
 	iter = std::find_if(path.begin(), path.end(), [=](cocos2d::Vec2 pos) { return pos == tilePos; });
 	if (iter != path.end()) {
 
+		int pathArrowsIndex = iter - path.begin() - 1;
+		cocos2d::Vector<cocos2d::Sprite *>::iterator pathArrowsIter = pathArrows.begin() + pathArrowsIndex;
+
 		iter++;
 		for ( ; iter != path.end(); ) {
 
 			unpaintTileNode((*iter));
 			pathMap.erase((*iter));
 			iter = path.erase(iter);
+		}
+
+		(*pathArrowsIter)->removeFromParentAndCleanup(false);
+		pathArrowsIter++;
+		for ( ; pathArrowsIter != pathArrows.end(); )
+		{
+			(*pathArrowsIter)->removeFromParentAndCleanup(true);
+			pathArrowsIter = pathArrows.erase(pathArrowsIter);
 		}
 	}
 }

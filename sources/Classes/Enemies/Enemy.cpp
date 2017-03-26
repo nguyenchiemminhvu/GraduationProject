@@ -11,7 +11,7 @@
 Enemy::Enemy(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, int startDir, float speed)
 {
 	this->gameLayer = gameLayer;
-	this->gameLayer->addChild(this);
+	this->gameLayer->addChild(this, (int)ZOrderLayer::LAYER_10);
 	this->setPosition(pos);
 	this->previousPos = this->getPosition();
 	setStartDirection(startDir);

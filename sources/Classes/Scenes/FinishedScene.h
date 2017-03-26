@@ -69,6 +69,7 @@ private:
 	void runSequenceActions();
 	void setEnemy2Visible();
 	void flipMainCharacterX();
+	void playMusic();
 };
 
 #endif // !__FINISHED_SCENE_H__

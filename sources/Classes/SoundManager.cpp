@@ -20,16 +20,14 @@ SoundManager * SoundManager::getInstance()
 SoundManager::SoundManager()
 {
 	loadMusic();
+	currentMusicID = -1;
 }
 
 
 void SoundManager::loadMusic()
 {
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/intro.mp3");
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/story.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/background_1.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/background_2.mp3");
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/background_3.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/final.mp3");
 }
 
@@ -40,26 +38,12 @@ SoundManager::~SoundManager()
 }
 
 
-void SoundManager::playIntroMusic()
-{
-	if (GameSettings::getInstance()->isSoundEffectEnabled())
-	{
-		CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
-		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sounds/intro.mp3");
-	}
-	else
-	{
-		stopMusic();
-	}
-}
-
-
 void SoundManager::playStoryMusic()
 {
 	if (GameSettings::getInstance()->isSoundEffectEnabled())
 	{
 		CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
-		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sounds/story.mp3");
+		currentMusicID = CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sounds/background_1.mp3");
 	}
 	else
 	{
@@ -72,10 +56,10 @@ void SoundManager::playBackgroundMusic()
 {
 	if (GameSettings::getInstance()->isSoundEffectEnabled())
 	{
-		int rand = cocos2d::random(1, 3);
+		int rand = cocos2d::random(1, 2);
 		cocos2d::String *file = cocos2d::String::createWithFormat("sounds/background_%d.mp3", rand);
 		CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
-		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(file->getCString(), true);
+		currentMusicID = CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(file->getCString(), true);
 	}
 	else
 	{
@@ -89,7 +73,7 @@ void SoundManager::playEndGameMusic()
 	if (GameSettings::getInstance()->isSoundEffectEnabled())
 	{
 		CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
-		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sounds/final.mp3");
+		currentMusicID = CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sounds/final.mp3");
 	}
 	else
 	{
@@ -101,6 +85,8 @@ void SoundManager::playEndGameMusic()
 void SoundManager::stopMusic()
 {
 	CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+	
+	currentMusicID = -1;
 }
 
 
@@ -112,5 +98,8 @@ void SoundManager::pauseMusic()
 
 void SoundManager::resumeMusic()
 {
-	CocosDenshion::SimpleAudioEngine::getInstance()->resumeAllEffects();
+	if (currentMusicID == -1)
+		return;
+
+	CocosDenshion::SimpleAudioEngine::getInstance()->resumeEffect(currentMusicID);
 }

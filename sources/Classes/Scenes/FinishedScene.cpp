@@ -38,7 +38,13 @@ bool FinishedScene::init()
 	initSequenceAction();
 	initKeyEventListener();
 
-	SoundManager::getInstance()->playEndGameMusic();
+	this->runAction(
+		cocos2d::Sequence::create(
+			cocos2d::DelayTime::create(1.0F),
+			cocos2d::CallFunc::create(this, callfunc_selector(FinishedScene::playMusic)),
+			NULL
+		)
+	);
 
 	return true;
 }
@@ -370,5 +376,11 @@ void FinishedScene::setEnemy2Visible()
 void FinishedScene::flipMainCharacterX()
 {
 	mainCharacter->setFlippedX(!mainCharacter->isFlippedX());
+}
+
+
+void FinishedScene::playMusic()
+{
+	SoundManager::getInstance()->playEndGameMusic();
 }
 

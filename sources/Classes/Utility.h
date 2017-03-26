@@ -4,6 +4,7 @@
 #define __UTILITY_H__
 
 #include "cocos2d.h"
+#include <vector>
 
 namespace utils
 {
@@ -13,6 +14,7 @@ namespace utils
 	int countNumberOfFolderWithFormat(const char *format);
 
 	cocos2d::Sprite * loadBaseSpriteWithFormat(const char *format);
+
 }
 
 #endif // !__UTILITY_H__

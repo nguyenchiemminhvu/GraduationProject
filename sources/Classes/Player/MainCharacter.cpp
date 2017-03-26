@@ -27,7 +27,7 @@ MainCharacter::MainCharacter(cocos2d::Layer * gameLayer, cocos2d::Vec2 initPos)
 	started = false;
 	arrived = false;
 	this->setPosition(initPos);
-	gameLayer->addChild(this, 100);
+	gameLayer->addChild(this, (int)ZOrderLayer::LAYER_10);
 
 	initMainCharacterAnimation();
 	setIdleAnimation();
