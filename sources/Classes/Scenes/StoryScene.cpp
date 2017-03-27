@@ -26,7 +26,7 @@ bool StoryScene::init()
 	origin = cocos2d::Director::getInstance()->getVisibleOrigin();
 	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
-
+	initStoryImages();
 
 	SoundManager::getInstance()->playStoryMusic();
 
@@ -38,6 +38,14 @@ bool StoryScene::init()
 			NULL
 		)
 	);
+
+	return true;
+}
+
+
+bool StoryScene::initStoryImages()
+{
+
 
 	return true;
 }

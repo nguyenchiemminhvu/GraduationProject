@@ -534,7 +534,12 @@ void GameScene::clearTheRestOfPath(cocos2d::Vec2 tilePos)
 			iter = path.erase(iter);
 		}
 
+		// reset state of the arrow
+		(*pathArrowsIter)->setFlippedX(false);
+		(*pathArrowsIter)->setFlippedY(false);
+		(*pathArrowsIter)->setRotation(0.0F);
 		(*pathArrowsIter)->removeFromParentAndCleanup(false);
+
 		pathArrowsIter++;
 		for ( ; pathArrowsIter != pathArrows.end(); )
 		{
