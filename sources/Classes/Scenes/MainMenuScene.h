@@ -32,6 +32,7 @@ private:
 	// main menu scene transitions
 
 	void replaceCreditsScene();
+	void replaceStoryScene();
 	void replaceLevelSelectionBoard();
 
 	//////////////////////////////////

@@ -20,6 +20,21 @@ private:
 	cocos2d::Vec2 origin;
 	cocos2d::Size visibleSize;
 
+
+	//////////////////////////////////
+	// initialization
+	void initTouchListener();
+
+
+	//////////////////////////////////
+	// touch event
+	bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event);
+
+
+	//////////////////////////////////
+	// scene transition
+	void replaceLevelSelectionBoard();
+
 };
 
 #endif // !__STORY_SCENE_H__

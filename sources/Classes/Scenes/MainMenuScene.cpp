@@ -4,6 +4,7 @@
 #include "Definition.h"
 #include "Scenes\CreditsScene.h"
 #include "Scenes\LevelSelectionBoard.h"
+#include "Scenes\StoryScene.h"
 #include "SoundManager.h"
 
 
@@ -107,6 +108,15 @@ void MainMenu::replaceCreditsScene()
 {
 	auto credits = Credits::createScene();
 	cocos2d::Director::getInstance()->replaceScene(credits);
+}
+
+
+void MainMenu::replaceStoryScene()
+{
+	GameSettings::getInstance()->ignoreStory();
+
+	auto story = StoryScene::createScene();
+	cocos2d::Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(1.0F, story));
 }
 
 
@@ -226,10 +236,13 @@ void MainMenu::onButtonPlayTouched(cocos2d::Ref * ref, cocos2d::ui::Button::Touc
 		break;
 
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
-		//////////////////////////////////////////////
-		// replace level selection board
-		levelBoard = LevelSelectionBoard::createScene();
-		cocos2d::Director::getInstance()->replaceScene(levelBoard);
+
+		// show game story only the first time
+		if (!GameSettings::getInstance()->hasShowedStory())
+			replaceStoryScene();
+		else
+			replaceLevelSelectionBoard();
+		
 		break;
 	
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:

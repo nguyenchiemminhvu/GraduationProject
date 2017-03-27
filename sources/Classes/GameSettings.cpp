@@ -153,6 +153,18 @@ void GameSettings::disableInstruction()
 }
 
 
+bool GameSettings::hasShowedStory()
+{
+	return isStoryShowed;
+}
+
+
+void GameSettings::ignoreStory()
+{
+	isStoryShowed = true;
+}
+
+
 GameSettings::~GameSettings()
 {
 }
@@ -169,5 +181,6 @@ GameSettings::GameSettings()
 	selectedLevel = 0;
 	levelStatus = 1; //enable the first level
 
-	needInstruction = true; //instruction is needed for the first level
+	needInstruction = true; // instruction is needed for the first level
+	isStoryShowed = false; // story of game will be showed for the first launch
 }

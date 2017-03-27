@@ -37,6 +37,11 @@ public:
 	void enableInstruction();
 	void disableInstruction();
 
+	///////////////////////////////////
+	// story of game
+	bool hasShowedStory();
+	void ignoreStory();
+
 	~GameSettings();
 	
 private:
@@ -50,6 +55,7 @@ private:
 	int selectedLevel;
 	unsigned long long int levelStatus;
 
+	bool isStoryShowed;
 	bool needInstruction;
 
 	GameSettings();
