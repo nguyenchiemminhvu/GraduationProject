@@ -420,15 +420,32 @@ bool GameScene::addNodeToPath(cocos2d::Vec2 nextNode)
 				this->addChild(pathArrows.at(pathArrows.size() - 2), (int)ZOrderLayer::LAYER_1);
 				
 				// rotate the arrow based on previous tile location
-				if (path.at(path.size() - 3).x == path.at(path.size() - 2).x)
+				if (path.at(path.size() - 2).x == path.at(path.size() - 1).x)
 				{
-					// left or right
-
+					// up or down
+					if (path.at(path.size() - 2).y > path.at(path.size() - 1).y)
+					{
+						// up
+						pathArrows.at(pathArrows.size() - 2)->setFlippedY(true);
+					}
+					else
+					{
+						// down
+					}
 				}
 				else
 				{
-					// up or down
-
+					// left or right
+					if (path.at(path.size() - 2).x > path.at(path.size() - 1).x)
+					{
+						// right
+						pathArrows.at(pathArrows.size() - 2)->setRotation(90.0F);
+					}
+					else
+					{
+						// left
+						pathArrows.at(pathArrows.size() - 2)->setRotation(-90.0F);
+					}
 				}
 			}
 		}
