@@ -1063,6 +1063,42 @@ void InsideAntiClockwiseEnemy::calculateNextMoveForwardSteps()
 }
 
 
+Chaser * Chaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+{
+	return nullptr;
+}
+
+
+Chaser::~Chaser()
+{
+
+}
+
+
+void Chaser::update(float dt)
+{
+
+}
+
+
+ChaserUpgraded * ChaserUpgraded::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+{
+	return nullptr;
+}
+
+
+ChaserUpgraded::~ChaserUpgraded()
+{
+
+}
+
+
+void ChaserUpgraded::update(float dt)
+{
+
+}
+
+
 //////////////////////////////////////////////////////
 // Enemy factory
 //////////////////////////////////////////////////////
@@ -1080,7 +1116,7 @@ EnemyFactory::~EnemyFactory()
 
 ////////////////////////////////////////////////////
 // return an enemy based-on the type, add it to game layer at pos position
-Enemy * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, int startDirection, float speed)
+Enemy * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed, int startDirection)
 {
 	Enemy *e = nullptr;
 
@@ -1089,27 +1125,37 @@ Enemy * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, cocos2d:
 	switch (type)
 	{
 	case (int)EnemyTypes::LEFT_RIGHT:
-		e = HorizontalMovementEnemy::create(gameLayer, pos, startDirection, speed);
+		e = HorizontalMovementEnemy::create(gameLayer, pos, speed, startDirection);
 		break;
 
 	case (int)EnemyTypes::UP_DOWN:
-		e = VerticalMovementEnemy::create(gameLayer, pos, startDirection, speed);
+		e = VerticalMovementEnemy::create(gameLayer, pos, speed, startDirection);
 		break;
 
 	case (int)EnemyTypes::OUTSIDE_CLOCKWISE:
-		e = OutsideClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
+		e = OutsideClockwiseEnemy::create(gameLayer, pos, speed, startDirection);
 		break;
 
 	case (int)EnemyTypes::OUTSIDE_ANTI_CLOCKWISE:
-		e = OutsideAntiClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
+		e = OutsideAntiClockwiseEnemy::create(gameLayer, pos, speed, startDirection);
 		break;
 
 	case (int)EnemyTypes::INSIDE_CLOCKWISE:
-		e = InsideClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
+		e = InsideClockwiseEnemy::create(gameLayer, pos, speed, startDirection);
 		break;
 
 	case (int)EnemyTypes::INSIDE_ANTI_CLOCKWISE:
-		e = InsideAntiClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
+		e = InsideAntiClockwiseEnemy::create(gameLayer, pos, speed, startDirection);
+		break;
+
+		// TODO: create a chaser
+	case (int)EnemyTypes::CHASER:
+		e = Chaser::create(gameLayer, pos, speed);
+		break;
+
+		// TODO: create a chaser upgraded
+	case (int)EnemyTypes::CHASER_UPGRADED:
+		e = ChaserUpgraded::create(gameLayer, pos, speed);
 		break;
 
 	default:

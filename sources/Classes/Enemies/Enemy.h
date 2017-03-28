@@ -15,7 +15,8 @@
 #define RUNNING_ANIMATION_TAG	0x0000FF00
 #define EATING_ANIMATION_TAG	0x00FF0000
 
-class Enemy : public cocos2d::Sprite {
+class Enemy : public cocos2d::Sprite 
+{
 public:
 
 	virtual ~Enemy();
@@ -93,7 +94,8 @@ private:
 #ifndef __VERTICAL_MOVEMENT_ENEMY__
 #define __VERTICAL_MOVEMENT_ENEMY__
 
-class VerticalMovementEnemy : public Enemy {
+class VerticalMovementEnemy : public Enemy 
+{
 public:
 
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
@@ -120,7 +122,8 @@ private:
 #ifndef __HORIZONTAL_MOVEMENT_ENEMY__
 #define __HORIZONTAL_MOVEMENT_ENEMY__
 
-class HorizontalMovementEnemy : public Enemy {
+class HorizontalMovementEnemy : public Enemy 
+{
 public:
 
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
@@ -147,7 +150,8 @@ private:
 #ifndef __OUTSIDE_CLOCKWISE_ENEMY__
 #define __OUTSIDE_CLOCKWISE_ENEMY__
 
-class OutsideClockwiseEnemy : public Enemy {
+class OutsideClockwiseEnemy : public Enemy 
+{
 public:
 
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
@@ -173,7 +177,8 @@ private:
 #ifndef __OUTSIDE_ANTI_CLOCKWISE_ENEMY__
 #define __OUTSIDE_ANTI_CLOCKWISE_ENEMY__
 
-class OutsideAntiClockwiseEnemy : public Enemy {
+class OutsideAntiClockwiseEnemy : public Enemy 
+{
 public:
 
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
@@ -199,7 +204,8 @@ private:
 #ifndef __INSIDE_CLOCKWISE_ENEMY__
 #define __INSIDE_CLOCKWISE_ENEMY__
 
-class InsideClockwiseEnemy : public Enemy {
+class InsideClockwiseEnemy : public Enemy 
+{
 public:
 
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
@@ -225,7 +231,8 @@ private:
 #ifndef __INSIDE_ANTI_CLOCKWISE_ENEMY__
 #define __INSIDE_ANTI_CLOCKWISE_ENEMY__
 
-class InsideAntiClockwiseEnemy : public Enemy {
+class InsideAntiClockwiseEnemy : public Enemy 
+{
 public:
 
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
@@ -248,15 +255,65 @@ private:
 
 #endif // !__INSIDE_ANTI_CLOCKWISE_ENEMY__
 
+#ifndef __CHASER__
+#define __CHASER__
+
+class Chaser : public Enemy
+{
+public:
+
+	static Chaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	virtual ~Chaser();
+
+	virtual void update(float dt);
+
+protected:
+
+
+
+private:
+
+
+};
+
+#endif // ! __CHASER__
+
+
+#ifndef __CHASER_UPGRADED__
+#define __CHASER_UPGRADED__
+
+class ChaserUpgraded : public Chaser
+{
+public:
+
+	static ChaserUpgraded* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	virtual ~ChaserUpgraded();
+
+	virtual void update(float dt);
+
+protected:
+
+
+
+private:
+
+
+};
+
+#endif // !__CHASER_UPGRADED__
+
+
+
 #ifndef __ENEMY_FACTORY__
 #define __ENEMY_FACTORY__
 
-class EnemyFactory {
+class EnemyFactory
+{
 public:
 
 	EnemyFactory();
 	virtual ~EnemyFactory();
-	Enemy* createEnemy(int type, cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDirection, float speed);
+	Enemy* createEnemy(int type, cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed = 1.0F, int startDirection = -1);
 
 private:
 
