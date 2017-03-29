@@ -4,6 +4,8 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "Definition.h"
+
 
 #define VECTOR_ZERO		cocos2d::Vec2(0.0F, 0.0F)
 #define VECTOR_UP		cocos2d::Vec2(0.0F, 1.0F)
@@ -15,9 +17,11 @@
 #define RUNNING_ANIMATION_TAG	0x0000FF00
 #define EATING_ANIMATION_TAG	0x00FF0000
 
-class Enemy : public cocos2d::Sprite 
+class Enemy : public cocos2d::Sprite
 {
 public:
+
+	virtual EnemyTypes getType() { return EnemyTypes::UNKNOWED; }
 
 	virtual ~Enemy();
 
@@ -98,6 +102,8 @@ class VerticalMovementEnemy : public Enemy
 {
 public:
 
+	virtual EnemyTypes getType() { return EnemyTypes::UP_DOWN; }
+
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
 	virtual ~VerticalMovementEnemy();
 
@@ -125,6 +131,8 @@ private:
 class HorizontalMovementEnemy : public Enemy 
 {
 public:
+
+	virtual EnemyTypes getType() { return EnemyTypes::LEFT_RIGHT; }
 
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
 	virtual ~HorizontalMovementEnemy();
@@ -154,6 +162,8 @@ class OutsideClockwiseEnemy : public Enemy
 {
 public:
 
+	virtual EnemyTypes getType() { return EnemyTypes::OUTSIDE_CLOCKWISE; }
+
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
 	virtual ~OutsideClockwiseEnemy();
 
@@ -180,6 +190,8 @@ private:
 class OutsideAntiClockwiseEnemy : public Enemy 
 {
 public:
+
+	virtual EnemyTypes getType() { return EnemyTypes::OUTSIDE_ANTI_CLOCKWISE; }
 
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
 	virtual ~OutsideAntiClockwiseEnemy();
@@ -208,6 +220,8 @@ class InsideClockwiseEnemy : public Enemy
 {
 public:
 
+	virtual EnemyTypes getType() { return EnemyTypes::INSIDE_CLOCKWISE; }
+
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
 	virtual ~InsideClockwiseEnemy();
 
@@ -235,6 +249,8 @@ class InsideAntiClockwiseEnemy : public Enemy
 {
 public:
 
+	virtual EnemyTypes getType() { return EnemyTypes::INSIDE_ANTI_CLOCKWISE; }
+
 	static Enemy* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, int startDir, float speed);
 	virtual ~InsideAntiClockwiseEnemy();
 
@@ -255,52 +271,90 @@ private:
 
 #endif // !__INSIDE_ANTI_CLOCKWISE_ENEMY__
 
+
 #ifndef __CHASER__
 #define __CHASER__
 
-class Chaser : public Enemy
+class Chaser : public cocos2d::Sprite
 {
 public:
 
-	static Chaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	virtual EnemyTypes getType() { return EnemyTypes::UNKNOWED; }
+
 	virtual ~Chaser();
-
 	virtual void update(float dt);
 
 protected:
 
+	cocos2d::ActionManager *actionManager;
+	cocos2d::Layer *gameLayer;
 
+	cocos2d::Animation *idleAnimation;
+	cocos2d::Animation *runningAnimation;
+	cocos2d::Animation *eatingAnimation;
+
+	Chaser(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
 
 private:
 
 
 };
 
-#endif // ! __CHASER__
+#endif // !__CHASER__
 
 
-#ifndef __CHASER_UPGRADED__
-#define __CHASER_UPGRADED__
+#ifndef __FORWARDING_CHASER__
+#define __FORWARDING_CHASER__
 
-class ChaserUpgraded : public Chaser
+class ForwardingChaser : public Chaser
 {
 public:
 
-	static ChaserUpgraded* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
-	virtual ~ChaserUpgraded();
+	virtual EnemyTypes getType() { return EnemyTypes::FORWARDING_CHASER; }
+
+	static ForwardingChaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	virtual ~ForwardingChaser();
 
 	virtual void update(float dt);
 
 protected:
 
-
+	ForwardingChaser(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	virtual void initEnemyAnimation();
 
 private:
 
 
 };
 
-#endif // !__CHASER_UPGRADED__
+#endif // ! __FORWARDING_CHASER__
+
+
+#ifndef __UPGRADED_CHASER__
+#define __UPGRADED_CHASER__
+
+class UpgradedChaser : public Chaser
+{
+public:
+
+	virtual EnemyTypes getType() { return EnemyTypes::UPGRADED_CHASER; }
+
+	static UpgradedChaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	virtual ~UpgradedChaser();
+
+	virtual void update(float dt);
+
+protected:
+
+	UpgradedChaser(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	virtual void initEnemyAnimation();
+
+private:
+
+
+};
+
+#endif // !__UPGRADED_CHASER__
 
 
 
@@ -313,7 +367,7 @@ public:
 
 	EnemyFactory();
 	virtual ~EnemyFactory();
-	Enemy* createEnemy(int type, cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed = 1.0F, int startDirection = -1);
+	cocos2d::Node* createEnemy(int type, cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed = 1.0F, int startDirection = -1);
 
 private:
 

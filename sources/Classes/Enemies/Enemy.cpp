@@ -1,6 +1,5 @@
 #include "Enemy.h"
 #include "Utility.h"
-#include "Definition.h"
 #include "Scenes\GameScene.h"
 
 
@@ -1063,40 +1062,22 @@ void InsideAntiClockwiseEnemy::calculateNextMoveForwardSteps()
 }
 
 
-Chaser * Chaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
-{
-	return nullptr;
-}
+//////////////////////////////////////////////////////
+// Chaser
+//////////////////////////////////////////////////////
 
 
-Chaser::~Chaser()
-{
 
-}
-
-
-void Chaser::update(float dt)
-{
-
-}
+//////////////////////////////////////////////////////
+// Forwarding Chaser
+//////////////////////////////////////////////////////
 
 
-ChaserUpgraded * ChaserUpgraded::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
-{
-	return nullptr;
-}
 
+//////////////////////////////////////////////////////
+// Upgraded Chaser
+//////////////////////////////////////////////////////
 
-ChaserUpgraded::~ChaserUpgraded()
-{
-
-}
-
-
-void ChaserUpgraded::update(float dt)
-{
-
-}
 
 
 //////////////////////////////////////////////////////
@@ -1116,46 +1097,46 @@ EnemyFactory::~EnemyFactory()
 
 ////////////////////////////////////////////////////
 // return an enemy based-on the type, add it to game layer at pos position
-Enemy * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed, int startDirection)
+cocos2d::Node * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed, int startDirection)
 {
-	Enemy *e = nullptr;
+	cocos2d::Node *e = nullptr;
 
 	///////////////////////////////////////////////
 	// create enemy based-on enemy type
 	switch (type)
 	{
 	case (int)EnemyTypes::LEFT_RIGHT:
-		e = HorizontalMovementEnemy::create(gameLayer, pos, speed, startDirection);
+		e = HorizontalMovementEnemy::create(gameLayer, pos, startDirection, speed);
 		break;
 
 	case (int)EnemyTypes::UP_DOWN:
-		e = VerticalMovementEnemy::create(gameLayer, pos, speed, startDirection);
+		e = VerticalMovementEnemy::create(gameLayer, pos, startDirection, speed);
 		break;
 
 	case (int)EnemyTypes::OUTSIDE_CLOCKWISE:
-		e = OutsideClockwiseEnemy::create(gameLayer, pos, speed, startDirection);
+		e = OutsideClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
 		break;
 
 	case (int)EnemyTypes::OUTSIDE_ANTI_CLOCKWISE:
-		e = OutsideAntiClockwiseEnemy::create(gameLayer, pos, speed, startDirection);
+		e = OutsideAntiClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
 		break;
 
 	case (int)EnemyTypes::INSIDE_CLOCKWISE:
-		e = InsideClockwiseEnemy::create(gameLayer, pos, speed, startDirection);
+		e = InsideClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
 		break;
 
 	case (int)EnemyTypes::INSIDE_ANTI_CLOCKWISE:
-		e = InsideAntiClockwiseEnemy::create(gameLayer, pos, speed, startDirection);
+		e = InsideAntiClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
 		break;
 
-		// TODO: create a chaser
-	case (int)EnemyTypes::CHASER:
-		e = Chaser::create(gameLayer, pos, speed);
+		// TODO: create a forwarding chaser
+	case (int)EnemyTypes::FORWARDING_CHASER:
+		e = ForwardingChaser::create(gameLayer, pos, speed);
 		break;
 
-		// TODO: create a chaser upgraded
-	case (int)EnemyTypes::CHASER_UPGRADED:
-		e = ChaserUpgraded::create(gameLayer, pos, speed);
+		// TODO: create a upgraded chaser
+	case (int)EnemyTypes::UPGRADED_CHASER:
+		e = UpgradedChaser::create(gameLayer, pos, speed);
 		break;
 
 	default:
@@ -1171,4 +1152,84 @@ Enemy * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, cocos2d:
 	}
 
 	return e;
+}
+
+
+Chaser::~Chaser()
+{
+
+}
+
+
+void Chaser::update(float dt)
+{
+
+}
+
+
+Chaser::Chaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+{
+
+}
+
+
+ForwardingChaser * ForwardingChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+{
+	return nullptr;
+}
+
+
+ForwardingChaser::~ForwardingChaser()
+{
+
+}
+
+
+void ForwardingChaser::update(float dt)
+{
+
+}
+
+
+ForwardingChaser::ForwardingChaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+	: Chaser(gameLayer, pos, speed)
+{
+
+}
+
+
+void ForwardingChaser::initEnemyAnimation()
+{
+
+}
+
+
+UpgradedChaser * UpgradedChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+{
+	return nullptr;
+}
+
+
+UpgradedChaser::~UpgradedChaser()
+{
+
+}
+
+
+void UpgradedChaser::update(float dt)
+{
+
+}
+
+
+UpgradedChaser::UpgradedChaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+	: Chaser(gameLayer, pos, speed)
+{
+
+}
+
+
+void UpgradedChaser::initEnemyAnimation()
+{
+
 }

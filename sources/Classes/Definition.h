@@ -47,10 +47,11 @@ enum class EnemyTypes {
 	OUTSIDE_ANTI_CLOCKWISE,
 	INSIDE_CLOCKWISE,
 	INSIDE_ANTI_CLOCKWISE,
-	CHASER,
-	CHASER_UPGRADED,
+	FORWARDING_CHASER,
+	UPGRADED_CHASER,
 	
-	ENEMY_TYPE_COUNT
+	ENEMY_TYPE_COUNT,
+	UNKNOWED = -1
 };
 
 enum class EnemyStartDirection {
@@ -58,7 +59,9 @@ enum class EnemyStartDirection {
 	UP = 1,
 	DOWN,
 	LEFT,
-	RIGHT
+	RIGHT,
+
+	UNKNOWED = -1
 };
 
 enum class ZOrderLayer	{

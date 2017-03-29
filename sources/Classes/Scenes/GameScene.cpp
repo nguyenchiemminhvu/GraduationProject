@@ -312,7 +312,7 @@ bool GameScene::initEnemies()
 		if (!properties["speed"].isNull())
 			speed = properties["speed"].asFloat();
 
-		enemyFactory->createEnemy(type, this, enemyPos, startDirection, speed);
+		enemyFactory->createEnemy(type, this, enemyPos, speed, startDirection);
 
 		////////////////////////////////////////
 		// information for HUD
