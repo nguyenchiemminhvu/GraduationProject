@@ -284,16 +284,22 @@ public:
 	virtual ~Chaser();
 	virtual void update(float dt);
 
+	void setIdleAnimation();
+	void setRunningAnimation();
+	void setEatingAnimation();
+
 protected:
 
 	cocos2d::ActionManager *actionManager;
 	cocos2d::Layer *gameLayer;
+	float speed;
 
 	cocos2d::Animation *idleAnimation;
 	cocos2d::Animation *runningAnimation;
 	cocos2d::Animation *eatingAnimation;
 
 	Chaser(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	virtual void initEnemyAnimation() = 0;
 
 private:
 
@@ -312,7 +318,7 @@ public:
 
 	virtual EnemyTypes getType() { return EnemyTypes::FORWARDING_CHASER; }
 
-	static ForwardingChaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	static Chaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
 	virtual ~ForwardingChaser();
 
 	virtual void update(float dt);
@@ -339,7 +345,7 @@ public:
 
 	virtual EnemyTypes getType() { return EnemyTypes::UPGRADED_CHASER; }
 
-	static UpgradedChaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
+	static Chaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
 	virtual ~UpgradedChaser();
 
 	virtual void update(float dt);

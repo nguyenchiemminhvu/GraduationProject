@@ -20,8 +20,6 @@ Enemy::Enemy(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, int startDir, float 
 	
 	actionManager = cocos2d::Director::getInstance()->getActionManager();
 	this->scheduleUpdate();
-
-	auto director = cocos2d::Director::getInstance();
 }
 
 
@@ -1157,7 +1155,9 @@ cocos2d::Node * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, 
 
 Chaser::~Chaser()
 {
-
+	CC_SAFE_RELEASE(idleAnimation);
+	CC_SAFE_RELEASE(runningAnimation);
+	CC_SAFE_RELEASE(eatingAnimation);
 }
 
 
@@ -1166,15 +1166,41 @@ void Chaser::update(float dt)
 
 }
 
-
-Chaser::Chaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+void Chaser::setIdleAnimation()
 {
+}
 
+void Chaser::setRunningAnimation()
+{
+}
+
+void Chaser::setEatingAnimation()
+{
 }
 
 
-ForwardingChaser * ForwardingChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+Chaser::Chaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
 {
+	this->gameLayer = gameLayer;
+	this->gameLayer->addChild(this, (int)ZOrderLayer::LAYER_10);
+	this->setPosition(pos);
+	this->speed = speed;
+
+	this->actionManager = cocos2d::Director::getInstance()->getActionManager();
+	this->scheduleUpdate();
+}
+
+
+Chaser * ForwardingChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+{
+	Chaser *e = new (std::nothrow) ForwardingChaser(gameLayer, pos, speed);
+	if (e && e->initWithFile("images/enemies/type1or2/obstacle_idle_1.png")) {
+
+		e->autorelease();
+		return e;
+	}
+
+	CC_SAFE_DELETE(e);
 	return nullptr;
 }
 
@@ -1194,7 +1220,8 @@ void ForwardingChaser::update(float dt)
 ForwardingChaser::ForwardingChaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
 	: Chaser(gameLayer, pos, speed)
 {
-
+	initEnemyAnimation();
+	setIdleAnimation();
 }
 
 
@@ -1204,8 +1231,16 @@ void ForwardingChaser::initEnemyAnimation()
 }
 
 
-UpgradedChaser * UpgradedChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
+Chaser * UpgradedChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
 {
+	Chaser *e = new (std::nothrow) UpgradedChaser(gameLayer, pos, speed);
+	if (e && e->initWithFile("images/enemies/type1or2/obstacle_idle_1.png")) {
+
+		e->autorelease();
+		return e;
+	}
+
+	CC_SAFE_DELETE(e);
 	return nullptr;
 }
 
@@ -1225,7 +1260,8 @@ void UpgradedChaser::update(float dt)
 UpgradedChaser::UpgradedChaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
 	: Chaser(gameLayer, pos, speed)
 {
-
+	initEnemyAnimation();
+	setIdleAnimation();
 }
 
 
