@@ -5,6 +5,7 @@
 
 #include "cocos2d.h"
 #include <vector>
+#include <string>
 
 namespace utils
 {
@@ -15,6 +16,8 @@ namespace utils
 
 	cocos2d::Sprite * loadBaseSpriteWithFormat(const char *format);
 
+	void startNewDebugSession();
+	void logToDebugFile(std::string content);
 }
 
 #endif // !__UTILITY_H__

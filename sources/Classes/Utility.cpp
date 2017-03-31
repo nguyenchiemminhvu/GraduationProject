@@ -2,7 +2,11 @@
 #include "cocos2d.h"
 
 #include <string.h>
+#include <stdio.h>
+#include <time.h>
 
+const char *DEBUG_FILE = "DEBUG_LOG.txt";
+unsigned int log_line_number = 1;
 
 int utils::countNumberOfFileWithFormat(const char *format)
 {
@@ -67,4 +71,28 @@ cocos2d::Sprite * utils::loadBaseSpriteWithFormat(const char * format)
 	}
 	
 	return sprite;
+}
+
+
+void utils::startNewDebugSession()
+{
+	if (cocos2d::FileUtils::getInstance()->isFileExist(DEBUG_FILE))
+	{
+		cocos2d::FileUtils::getInstance()->removeFile(DEBUG_FILE);
+	}
+
+	log_line_number = 1;
+}
+
+
+void utils::logToDebugFile(std::string content)
+{
+	FILE *file = nullptr;
+	file = fopen(DEBUG_FILE, "a");
+	if (!file)
+		return;
+	
+	fprintf(file, "%d: %s\n", log_line_number++, content.c_str());
+
+	fclose(file);
 }
