@@ -1,0 +1,126 @@
+1: 5
+2: 5
+3: 5
+4: 5
+5: 5
+6: 5
+1: start running action
+2: ----------------
+3: 5
+4: push movement action into actions
+5: push movement action into actions
+6: push movement action into actions
+7: push movement action into actions
+8: push movement action into actions
+9: ----------------
+10: start running action
+11: ----------------
+12: 5
+13: push movement action into actions
+14: push movement action into actions
+15: push movement action into actions
+16: push movement action into actions
+17: push movement action into actions
+18: ----------------
+19: start running action
+20: ----------------
+21: 5
+22: push movement action into actions
+23: push movement action into actions
+24: push movement action into actions
+25: push movement action into actions
+26: push movement action into actions
+27: ----------------
+28: start running action
+29: ----------------
+30: 5
+31: push movement action into actions
+32: push movement action into actions
+33: push movement action into actions
+34: push movement action into actions
+35: push movement action into actions
+36: ----------------
+37: start running action
+38: ----------------
+39: 5
+40: push movement action into actions
+41: push movement action into actions
+42: push movement action into actions
+43: push movement action into actions
+44: push movement action into actions
+45: ----------------
+46: start running action
+47: ----------------
+48: 5
+49: push movement action into actions
+50: push movement action into actions
+51: push movement action into actions
+52: push movement action into actions
+53: push movement action into actions
+54: ----------------
+55: 5
+56: 5
+57: 5
+58: 5
+59: 5
+60: 5
+61: stop running action
+62: stop running action
+63: stop running action
+64: stop running action
+65: stop running action
+66: stop running action
+67: start running action
+68: ----------------
+69: 5
+70: push movement action into actions
+71: push movement action into actions
+72: push movement action into actions
+73: push movement action into actions
+74: push movement action into actions
+75: ----------------
+76: start running action
+77: ----------------
+78: 5
+79: push movement action into actions
+80: push movement action into actions
+81: push movement action into actions
+82: push movement action into actions
+83: push movement action into actions
+84: ----------------
+85: start running action
+86: ----------------
+87: 5
+88: push movement action into actions
+89: push movement action into actions
+90: push movement action into actions
+91: push movement action into actions
+92: push movement action into actions
+93: ----------------
+94: start running action
+95: ----------------
+96: 5
+97: push movement action into actions
+98: push movement action into actions
+99: push movement action into actions
+100: push movement action into actions
+101: push movement action into actions
+102: ----------------
+103: start running action
+104: ----------------
+105: 5
+106: push movement action into actions
+107: push movement action into actions
+108: push movement action into actions
+109: push movement action into actions
+110: push movement action into actions
+111: ----------------
+112: start running action
+113: ----------------
+114: 5
+115: push movement action into actions
+116: push movement action into actions
+117: push movement action into actions
+118: push movement action into actions
+119: push movement action into actions
+120: ----------------

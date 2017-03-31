@@ -9,6 +9,7 @@
 
 Enemy::Enemy(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, int startDir, float speed)
 {
+	this->nextMoveSteps = 0;
 	this->gameLayer = gameLayer;
 	this->gameLayer->addChild(this, (int)ZOrderLayer::LAYER_10);
 	this->setPosition(pos);
@@ -41,11 +42,11 @@ void Enemy::update(float dt)
 	{
 		flipLeft();
 	}
-
 	else if (previousPos.x < this->getPositionX())
 	{
 		flipRight();
 	}
+
 	previousPos = this->getPosition();
 
 	if (!isRunningAction) {
@@ -137,6 +138,11 @@ void Enemy::setEatingAnimation()
 // run the next subsequence action store in action vector
 void Enemy::move()
 {
+	if (nextMove.empty()) {
+		stopRunningAction();
+		return;
+	}
+
 	auto seq = cocos2d::Sequence::create(nextMove);
 	this->runAction(seq);
 }
@@ -145,6 +151,11 @@ void Enemy::move()
 // store the next subsequence action into action vector
 void Enemy::setupNextMove()
 {
+	cocos2d::Vector<cocos2d::FiniteTimeAction *>::iterator iter;
+	for (iter = nextMove.begin(); iter != nextMove.end(); )
+	{
+		iter = nextMove.erase(iter);
+	}
 	nextMove.clear();
 	nextMove = createNextMoveSequence();
 }
@@ -381,11 +392,12 @@ cocos2d::Vector<cocos2d::FiniteTimeAction*> VerticalMovementEnemy::createNextMov
 {
 	cocos2d::Vector<cocos2d::FiniteTimeAction*> actions;
 
-	actions.pushBack(cocos2d::CallFunc::create(this, callfunc_selector(VerticalMovementEnemy::setRunningAction)));
 	actions.pushBack(cocos2d::CallFunc::create(this, callfunc_selector(VerticalMovementEnemy::calculateNextMoveForwardSteps)));
 
 	for (int i = 0; i < nextMoveSteps; i++) {
-		actions.pushBack(moveForwardOneTile());
+		auto movement = moveForwardOneTile();
+		if (movement)
+			actions.pushBack(moveForwardOneTile());
 	}
 
 	actions.pushBack(cocos2d::CallFunc::create(this, callfunc_selector(VerticalMovementEnemy::turnBackY)));
