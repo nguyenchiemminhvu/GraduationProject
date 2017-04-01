@@ -4,6 +4,9 @@
 #include "Scenes\SplashScene.h"
 #include "GameSettings.h"
 #include "SoundManager.h"
+#include "Definition.h"
+#include "Utility.h"
+
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "pluginfacebook\PluginFacebook.h"
@@ -63,10 +66,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
 		director->setOpenGLView(glview);
 	}
 	
+#if __DEBUG_MODE__
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
 	// turn on display FPS
 	director->setDisplayStats(true);
 #endif
+
+#endif // !__DEBUG_MODE__
 
 	// set FPS. the default value is 1.0/60 if you don't call this
 	director->setAnimationInterval(1.0 / 60);

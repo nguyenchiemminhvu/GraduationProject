@@ -76,10 +76,9 @@ cocos2d::Sprite * utils::loadBaseSpriteWithFormat(const char * format)
 
 void utils::startNewDebugSession()
 {
-	if (cocos2d::FileUtils::getInstance()->isFileExist(DEBUG_FILE))
-	{
-		cocos2d::FileUtils::getInstance()->removeFile(DEBUG_FILE);
-	}
+	FILE *file = nullptr;
+	file = fopen(DEBUG_FILE, "w");
+	fclose(file);
 
 	log_line_number = 1;
 }

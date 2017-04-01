@@ -15,6 +15,13 @@ GameSettings * GameSettings::getInstance()
 	return instance;
 }
 
+
+bool GameSettings::hasLoaded()
+{
+	return this->loaded;
+}
+
+
 ///////////////////////////////////
 // sound settings
 
@@ -92,21 +99,35 @@ bool GameSettings::isLevelReset()
 
 void GameSettings::save()
 {
+	cocos2d::UserDefault::getInstance()->setBoolForKey("first_load", true);
 	cocos2d::UserDefault::getInstance()->setIntegerForKey("level_status", levelStatus);
 }
 
 
 void GameSettings::load()
 {
-	selectedLevel = 0;
-	int status = cocos2d::UserDefault::getInstance()->getIntegerForKey("level_status");
-	if (status == 0)
-		status = 1;
-	levelStatus = status;
-
-	if (levelStatus == getTotalLevel())
+	bool loadFirstTime = cocos2d::UserDefault::getInstance()->getBoolForKey("first_load");
+	if (!loadFirstTime)
 	{
-		winTheGame = true;
+		this->loaded = true;
+		cocos2d::UserDefault::getInstance()->setBoolForKey("first_load", this->loaded);
+
+		selectedLevel = 0;
+		levelStatus = 1;
+		winTheGame = false;
+	}
+	else
+	{
+		selectedLevel = 0;
+		int status = cocos2d::UserDefault::getInstance()->getIntegerForKey("level_status");
+		if (status == 0)
+			status = 1;
+		levelStatus = status;
+
+		if (levelStatus >= getTotalLevel())
+		{
+			winTheGame = true;
+		}
 	}
 }
 
@@ -172,6 +193,8 @@ GameSettings::~GameSettings()
 
 GameSettings::GameSettings()
 {
+	loaded = false;
+
 	didResetLevel = false;
 	winTheGame = false;
 

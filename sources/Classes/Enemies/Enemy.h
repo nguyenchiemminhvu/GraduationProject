@@ -26,7 +26,6 @@ public:
 	virtual ~Enemy();
 
 	virtual void update(float dt);
-	bool readyToMove();
 
 	void setIdleAnimation();
 	void setRunningAnimation();

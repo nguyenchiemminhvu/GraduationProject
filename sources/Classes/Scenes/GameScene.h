@@ -94,6 +94,7 @@ private:
 	bool loadTiledMapProperties();
 	bool findStartPos();
 	bool findEndPos();
+	bool initPhysicsBodyWalls();
 	bool initMainCharaceter();
 	bool initPath();
 	bool initUI();

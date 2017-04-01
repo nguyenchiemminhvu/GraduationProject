@@ -4,6 +4,7 @@
 #include "Scenes\LevelSelectionBoard.h"
 #include "Scenes\FinishedScene.h"
 #include "Toast.h"
+#include "Utility.h"
 #include "HUD.h"
 #include "Instruction.h"
 #include "SoundManager.h"
@@ -16,9 +17,13 @@ cocos2d::Scene* GameScene::createScene()
 	auto scene = cocos2d::Scene::createWithPhysics();
 	scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0.0F, 0.0F));
 
+#if __DEBUG_MODE__
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
 	scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
 #endif
+
+#endif // !__DEBUG_MODE__
 
 	auto layer = GameScene::create();
 	scene->addChild(layer, (int)ZOrderLayer::LAYER_1);
@@ -35,6 +40,10 @@ bool GameScene::init()
 		return false;
 	}
 
+#if __DEBUG_MODE__
+	utils::startNewDebugSession();
+#endif
+
 	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	origin = cocos2d::Director::getInstance()->getVisibleOrigin();
 
@@ -46,7 +55,10 @@ bool GameScene::init()
 	
 	if (!findEndPos())
 		return false;
-	
+
+	if (!initPhysicsBodyWalls())
+		return false;
+
 	if (!initMainCharaceter())
 		return false;
 	
@@ -158,7 +170,7 @@ bool GameScene::findStartPos()
 	startPos = pointToTileCoordinate(startPos);
 	startPos = tileCoordinateToPoint(startPos);
 	
-	auto nodeStart = cocos2d::Sprite::create("images/gateway/gate.png");
+	auto nodeStart = cocos2d::Sprite::create();
 	nodeStart->setPosition(startPos);
 	this->addChild(nodeStart);
 	
@@ -185,6 +197,35 @@ bool GameScene::findEndPos()
 	auto nodeEnd = cocos2d::Sprite::create("images/gateway/gate.png");
 	nodeEnd->setPosition(endPos);
 	this->addChild(nodeEnd);
+
+	return true;
+}
+
+
+bool GameScene::initPhysicsBodyWalls()
+{
+	//TODO: implement Moore neighborhood algorithm
+	//		to improve init wall physics body performance
+
+	for (int row = 0; row < getLayerSize().height; row++)
+	{
+		for (int col = 0; col < getLayerSize().width; col++)
+		{
+			if (getTileDescription(cocos2d::Vec2(row, col)) == TILE_WALL_DESCRIPTON)
+			{
+				cocos2d::Sprite *block = backgroundLayer->getTileAt(cocos2d::Vec2(row, col));
+				if (!block)
+					continue;
+
+				cocos2d::PhysicsBody *blockBody = cocos2d::PhysicsBody::createBox(getTileSize());
+				blockBody->setDynamic(false);
+				blockBody->setContactTestBitmask((int)ContactTestBitmast::WALL);
+				blockBody->setCollisionBitmask((int)CollisionBismask::WALL);
+
+				block->setPhysicsBody(blockBody);
+			}
+		}
+	}
 
 	return true;
 }
@@ -461,7 +502,7 @@ bool GameScene::isNextNodeValid(cocos2d::Vec2 nextNode)
 {
 	///////////////////////////////////////////////
 	// if the nextNode is a wall
-	if (getTileDescription(nextNode) == "wall")
+	if (getTileDescription(nextNode) == TILE_WALL_DESCRIPTON)
 		return false;
 
 	///////////////////////////////////////////////

@@ -9,6 +9,8 @@ public:
 
 	static GameSettings* getInstance();
 
+	bool hasLoaded();
+
 	///////////////////////////////////
 	// sound settings
 	bool isSoundEffectEnabled();
@@ -45,6 +47,8 @@ public:
 	~GameSettings();
 	
 private:
+
+	bool loaded;
 
 	bool didResetLevel;
 	bool winTheGame;

@@ -1,5 +1,8 @@
 #pragma once
 
+#define __DEBUG_MODE__		0
+#define __RELEASE_MODE__	0
+
 #define BUTTON_SIZE_SCALE_Y 1.1F
 
 #define MOVEMENT_DURATION_BETWEEN_TWO_NODE 0.25F
@@ -12,6 +15,7 @@
 #define SAFE_DELETE(p)				do { delete (p); (p) = NULL; } while(0);
 #define SAFE_DELETE_ARRAY(p)		do { delete p[]; (p) = NULL; } while(0);
 
+#define TILE_WALL_DESCRIPTON		"wall"
 
 enum class PathDirection
 {
@@ -29,13 +33,15 @@ enum class GameObjectSize
 
 enum class ContactTestBitmast {
 
-	MAIN_CHARACTER = 0b1,
-	OBSTACLE = 0b101
+	MAIN_CHARACTER	=	0b1,
+	WALL			=	0b110,
+	OBSTACLE		=	0b101
 };
 
 enum class CollisionBismask {
 
 	MAIN_CHARACTER,
+	WALL,
 	OBSTACLE
 };
 

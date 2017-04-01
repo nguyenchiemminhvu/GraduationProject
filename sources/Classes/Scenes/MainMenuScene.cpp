@@ -138,7 +138,9 @@ void MainMenu::onButtonFAQTouched(cocos2d::Ref * ref, cocos2d::ui::Button::Touch
 		break;
 	
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
+#if __DEBUG_MODE__
 		replaceCreditsScene();
+#endif
 		break;
 	
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:
@@ -237,10 +239,12 @@ void MainMenu::onButtonPlayTouched(cocos2d::Ref * ref, cocos2d::ui::Button::Touc
 
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
 
+#if __RELEASE_MODE__
 		// show game story only the first time
 		if (!GameSettings::getInstance()->hasShowedStory())
 			replaceStoryScene();
 		else
+#endif
 			replaceLevelSelectionBoard();
 		
 		break;

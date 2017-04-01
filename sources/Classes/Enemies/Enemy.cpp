@@ -83,17 +83,12 @@ void Enemy::setStartDirection(int startDir)
 	}
 }
 
-////////////////////////////////////////////////////
-// return true if there is at least one subsequence action 
-// in the action vector
-bool Enemy::readyToMove()
-{
-	return !nextMove.empty();
-}
-
 
 void Enemy::setIdleAnimation()
 {
+	if (!idleAnimation)
+		return;
+
 	this->stopAllActionsByTag(IDLE_ANIMATION_TAG);
 	this->stopAllActionsByTag(RUNNING_ANIMATION_TAG);
 	this->stopAllActionsByTag(EATING_ANIMATION_TAG);
@@ -108,6 +103,9 @@ void Enemy::setIdleAnimation()
 
 void Enemy::setRunningAnimation()
 {
+	if (!runningAnimation)
+		return;
+
 	this->stopAllActionsByTag(IDLE_ANIMATION_TAG);
 	this->stopAllActionsByTag(RUNNING_ANIMATION_TAG);
 	this->stopAllActionsByTag(EATING_ANIMATION_TAG);
@@ -122,6 +120,9 @@ void Enemy::setRunningAnimation()
 
 void Enemy::setEatingAnimation()
 {
+	if (!eatingAnimation)
+		return;
+
 	this->stopAllActionsByTag(RUNNING_ANIMATION_TAG);
 	this->stopAllActionsByTag(IDLE_ANIMATION_TAG);
 	this->stopAllActionsByTag(EATING_ANIMATION_TAG);
@@ -1180,14 +1181,50 @@ void Chaser::update(float dt)
 
 void Chaser::setIdleAnimation()
 {
+	if (!idleAnimation)
+		return;
+
+	this->stopAllActionsByTag(IDLE_ANIMATION_TAG);
+	this->stopAllActionsByTag(RUNNING_ANIMATION_TAG);
+	this->stopAllActionsByTag(EATING_ANIMATION_TAG);
+
+	auto animate = cocos2d::Animate::create(idleAnimation);
+	animate->setTag(IDLE_ANIMATION_TAG);
+	auto repeatIdleAction = cocos2d::RepeatForever::create(animate);
+	repeatIdleAction->setTag(IDLE_ANIMATION_TAG);
+	this->runAction(repeatIdleAction);
 }
 
 void Chaser::setRunningAnimation()
 {
+	if (!runningAnimation)
+		return;
+
+	this->stopAllActionsByTag(IDLE_ANIMATION_TAG);
+	this->stopAllActionsByTag(RUNNING_ANIMATION_TAG);
+	this->stopAllActionsByTag(EATING_ANIMATION_TAG);
+
+	auto animate = cocos2d::Animate::create(runningAnimation);
+	animate->setTag(RUNNING_ANIMATION_TAG);
+	auto repeatIdleAction = cocos2d::RepeatForever::create(animate);
+	repeatIdleAction->setTag(RUNNING_ANIMATION_TAG);
+	this->runAction(repeatIdleAction);
 }
 
 void Chaser::setEatingAnimation()
 {
+	if (!eatingAnimation)
+		return;
+
+	this->stopAllActionsByTag(RUNNING_ANIMATION_TAG);
+	this->stopAllActionsByTag(IDLE_ANIMATION_TAG);
+	this->stopAllActionsByTag(EATING_ANIMATION_TAG);
+
+	auto animate = cocos2d::Animate::create(eatingAnimation);
+	animate->setTag(EATING_ANIMATION_TAG);
+	auto repeatIdleAction = cocos2d::Repeat::create(animate, 1);
+	repeatIdleAction->setTag(EATING_ANIMATION_TAG);
+	this->runAction(repeatIdleAction);
 }
 
 
@@ -1206,7 +1243,7 @@ Chaser::Chaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
 Chaser * ForwardingChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
 {
 	Chaser *e = new (std::nothrow) ForwardingChaser(gameLayer, pos, speed);
-	if (e && e->initWithFile("images/enemies/type1or2/obstacle_idle_1.png")) {
+	if (e && e->initWithFile("images/enemies/type7/obstacle_idle_1.png")) {
 
 		e->autorelease();
 		return e;
@@ -1239,14 +1276,54 @@ ForwardingChaser::ForwardingChaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos
 
 void ForwardingChaser::initEnemyAnimation()
 {
+	///////////////////////////////////////////////////////
+	// init idle animation
+	cocos2d::Vector<cocos2d::SpriteFrame *> idleFrames;
 
+	int numOfIdleFrames = utils::countNumberOfFileWithFormat("images/enemies/type7/obstacle_idle_%d.png");
+	for (int i = 1; i <= 10; i++)
+	{
+		auto idleFileName = cocos2d::String::createWithFormat("images/enemies/type7/obstacle_idle_%d.png", 1);
+		auto frame = cocos2d::SpriteFrame::create(idleFileName->getCString(), cocos2d::Rect(0, 0, (int)GameObjectSize::WIDTH, (int)GameObjectSize::HEIGHT));
+		idleFrames.pushBack(frame);
+	}
+	idleAnimation = cocos2d::Animation::createWithSpriteFrames(idleFrames, (1.0F / 60.0F) * 5);
+	idleAnimation->retain();
+
+	///////////////////////////////////////////////////////
+	// init running animation
+	cocos2d::Vector<cocos2d::SpriteFrame *> runningFrames;
+
+	int numOfRungningFrames = utils::countNumberOfFileWithFormat("images/enemies/type7/obstacle_running_%d.png");
+	for (int i = 1; i <= numOfRungningFrames; i++)
+	{
+		auto runningFileName = cocos2d::String::createWithFormat("images/enemies/type7/obstacle_running_%d.png", i);
+		auto frame = cocos2d::SpriteFrame::create(runningFileName->getCString(), cocos2d::Rect(0, 0, (int)GameObjectSize::WIDTH, (int)GameObjectSize::HEIGHT));
+		runningFrames.pushBack(frame);
+	}
+	runningAnimation = cocos2d::Animation::createWithSpriteFrames(runningFrames, (1.0F / 60.0F) * 7);
+	runningAnimation->retain();
+
+	///////////////////////////////////////////////////////
+	// init eating animation
+	cocos2d::Vector<cocos2d::SpriteFrame *> eatingFrames;
+
+	int numOfEatingFrames = utils::countNumberOfFileWithFormat("images/enemies/type7/obstacle_eating_%d.png");
+	for (int i = 1; i <= numOfEatingFrames; i++)
+	{
+		auto eatingFileName = cocos2d::String::createWithFormat("images/enemies/type7/obstacle_eating_%d.png", i);
+		auto frame = cocos2d::SpriteFrame::create(eatingFileName->getCString(), cocos2d::Rect(0, 0, 72, (int)GameObjectSize::HEIGHT));
+		eatingFrames.pushBack(frame);
+	}
+	eatingAnimation = cocos2d::Animation::createWithSpriteFrames(eatingFrames, (1.0F / 60.0F) * 4);
+	eatingAnimation->retain();
 }
 
 
 Chaser * UpgradedChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
 {
 	Chaser *e = new (std::nothrow) UpgradedChaser(gameLayer, pos, speed);
-	if (e && e->initWithFile("images/enemies/type1or2/obstacle_idle_1.png")) {
+	if (e && e->initWithFile("images/enemies/type8/obstacle_idle_1.png")) {
 
 		e->autorelease();
 		return e;
@@ -1279,5 +1356,45 @@ UpgradedChaser::UpgradedChaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, fl
 
 void UpgradedChaser::initEnemyAnimation()
 {
+	///////////////////////////////////////////////////////
+	// init idle animation
+	cocos2d::Vector<cocos2d::SpriteFrame *> idleFrames;
 
+	int numOfIdleFrames = utils::countNumberOfFileWithFormat("images/enemies/type8/obstacle_idle_%d.png");
+	for (int i = 1; i <= 10; i++)
+	{
+		auto idleFileName = cocos2d::String::createWithFormat("images/enemies/type8/obstacle_idle_%d.png", 1);
+		auto frame = cocos2d::SpriteFrame::create(idleFileName->getCString(), cocos2d::Rect(0, 0, (int)GameObjectSize::WIDTH, (int)GameObjectSize::HEIGHT));
+		idleFrames.pushBack(frame);
+	}
+	idleAnimation = cocos2d::Animation::createWithSpriteFrames(idleFrames, (1.0F / 60.0F) * 5);
+	idleAnimation->retain();
+
+	///////////////////////////////////////////////////////
+	// init running animation
+	cocos2d::Vector<cocos2d::SpriteFrame *> runningFrames;
+
+	int numOfRungningFrames = utils::countNumberOfFileWithFormat("images/enemies/type8/obstacle_running_%d.png");
+	for (int i = 1; i <= numOfRungningFrames; i++)
+	{
+		auto runningFileName = cocos2d::String::createWithFormat("images/enemies/type8/obstacle_running_%d.png", i);
+		auto frame = cocos2d::SpriteFrame::create(runningFileName->getCString(), cocos2d::Rect(0, 0, (int)GameObjectSize::WIDTH, (int)GameObjectSize::HEIGHT));
+		runningFrames.pushBack(frame);
+	}
+	runningAnimation = cocos2d::Animation::createWithSpriteFrames(runningFrames, (1.0F / 60.0F) * 7);
+	runningAnimation->retain();
+
+	///////////////////////////////////////////////////////
+	// init eating animation
+	cocos2d::Vector<cocos2d::SpriteFrame *> eatingFrames;
+
+	int numOfEatingFrames = utils::countNumberOfFileWithFormat("images/enemies/type8/obstacle_eating_%d.png");
+	for (int i = 1; i <= numOfEatingFrames; i++)
+	{
+		auto eatingFileName = cocos2d::String::createWithFormat("images/enemies/type8/obstacle_eating_%d.png", i);
+		auto frame = cocos2d::SpriteFrame::create(eatingFileName->getCString(), cocos2d::Rect(0, 0, 72, (int)GameObjectSize::HEIGHT));
+		eatingFrames.pushBack(frame);
+	}
+	eatingAnimation = cocos2d::Animation::createWithSpriteFrames(eatingFrames, (1.0F / 60.0F) * 4);
+	eatingAnimation->retain();
 }
