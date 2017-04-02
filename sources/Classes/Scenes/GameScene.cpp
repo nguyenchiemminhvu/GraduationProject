@@ -12,6 +12,9 @@
 #include <algorithm>
 
 
+MainCharacter *mc_Instance = nullptr;
+
+
 cocos2d::Scene* GameScene::createScene()
 {
 	auto scene = cocos2d::Scene::createWithPhysics();
@@ -239,6 +242,8 @@ bool GameScene::initMainCharaceter()
 	mainCharacter->getPhysicsBody()->setContactTestBitmask((int)ContactTestBitmast::MAIN_CHARACTER);
 	mainCharacter->getPhysicsBody()->setCollisionBitmask((int)CollisionBismask::MAIN_CHARACTER);
 
+	mc_Instance = mainCharacter;
+
 	return true;
 }
 
@@ -353,13 +358,20 @@ bool GameScene::initEnemies()
 		if (!properties["speed"].isNull())
 			speed = properties["speed"].asFloat();
 
-		enemyFactory->createEnemy(type, this, enemyPos, speed, startDirection);
+		cocos2d::Node * enemy = enemyFactory->createEnemy(type, this, enemyPos, speed, startDirection);
 
 		////////////////////////////////////////
 		// information for HUD
 		if (speedForHud[type] == 0)
 		{
 			speedForHud[type] = speed;
+		}
+
+		/////////////////////////////////////////
+		// push immobilized monster into queue
+		if (IS_A(enemy, ImmobilizedEnemy))
+		{
+			immobilizedQueue.push_back(dynamic_cast<ImmobilizedEnemy *>(enemy));
 		}
 	}
 
@@ -682,6 +694,13 @@ void GameScene::onButtonReadyTouched(cocos2d::Ref * ref, cocos2d::ui::Button::To
 			if (GameSettings::getInstance()->isInstructionNeeded())
 			{
 				Instruction::getInstance()->showInstruction(Instruction::InstructionStep::GOOD_LUCK);
+			}
+
+			// activate all immobilized monster
+			std::vector<ImmobilizedEnemy *>::iterator iter;
+			for (iter = immobilizedQueue.begin(); iter != immobilizedQueue.end(); iter++)
+			{
+				(*iter)->activate();
 			}
 		}
 

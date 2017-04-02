@@ -48,7 +48,9 @@ private:
 	cocos2d::Scene	*currentGameScene;
 
 	MainCharacter	*mainCharacter;
-	EnemyFactory	*enemyFactory;
+
+	EnemyFactory					*enemyFactory;
+	std::vector<ImmobilizedEnemy *> immobilizedQueue;
 
 	HUD						*hud;
 	std::map<int, float>	speedForHud;

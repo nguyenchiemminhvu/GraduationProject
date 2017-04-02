@@ -17,6 +17,18 @@
 #define RUNNING_ANIMATION_TAG	0x0000FF00
 #define EATING_ANIMATION_TAG	0x00FF0000
 
+class ImmobilizedEnemy
+{
+public:
+
+	virtual void activate() = 0;
+
+protected:
+
+private:
+
+};
+
 class Enemy : public cocos2d::Sprite
 {
 public:
@@ -274,9 +286,11 @@ private:
 #ifndef __CHASER__
 #define __CHASER__
 
-class Chaser : public cocos2d::Sprite
+class Chaser : public cocos2d::Sprite, public ImmobilizedEnemy
 {
 public:
+
+	virtual void activate() { isActivated = true; }
 
 	virtual EnemyTypes getType() { return EnemyTypes::UNKNOWED; }
 
@@ -288,6 +302,8 @@ public:
 	void setEatingAnimation();
 
 protected:
+
+	bool isActivated;
 
 	cocos2d::ActionManager *actionManager;
 	cocos2d::Layer *gameLayer;
@@ -329,6 +345,7 @@ protected:
 
 private:
 
+	cocos2d::Vec2	chasingDirection;
 
 };
 

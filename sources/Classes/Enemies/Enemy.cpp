@@ -1140,12 +1140,10 @@ cocos2d::Node * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, 
 		e = InsideAntiClockwiseEnemy::create(gameLayer, pos, startDirection, speed);
 		break;
 
-		// TODO: create a forwarding chaser
 	case (int)EnemyTypes::FORWARDING_CHASER:
 		e = ForwardingChaser::create(gameLayer, pos, speed);
 		break;
 
-		// TODO: create a upgraded chaser
 	case (int)EnemyTypes::UPGRADED_CHASER:
 		e = UpgradedChaser::create(gameLayer, pos, speed);
 		break;
@@ -1157,7 +1155,7 @@ cocos2d::Node * EnemyFactory::createEnemy(int type, cocos2d::Layer * gameLayer, 
 	//create enemy physics body
 	if (e) {
 		e->setPhysicsBody(cocos2d::PhysicsBody::createCircle((int)GameObjectSize::WIDTH / 2));
-		e->getPhysicsBody()->setDynamic(false);
+		e->getPhysicsBody()->setDynamic(true);
 		e->getPhysicsBody()->setContactTestBitmask((int)ContactTestBitmast::OBSTACLE);
 		e->getPhysicsBody()->setCollisionBitmask((int)CollisionBismask::OBSTACLE);
 	}
@@ -1262,13 +1260,29 @@ ForwardingChaser::~ForwardingChaser()
 
 void ForwardingChaser::update(float dt)
 {
+	extern MainCharacter *mc_Instance;
 
+	if (mc_Instance && isActivated)
+	{
+		chasingDirection = mc_Instance->getPosition() - this->getPosition();
+		chasingDirection.normalize();
+
+		cocos2d::Vec2 nextPos = this->getPosition() + (chasingDirection * dt);
+		this->setPosition(nextPos);
+	}
+	else
+	{
+		chasingDirection = VECTOR_ZERO;
+	}
 }
 
 
 ForwardingChaser::ForwardingChaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, float speed)
 	: Chaser(gameLayer, pos, speed)
 {
+	isActivated			= false;
+	chasingDirection	= VECTOR_ZERO;
+
 	initEnemyAnimation();
 	setIdleAnimation();
 }
