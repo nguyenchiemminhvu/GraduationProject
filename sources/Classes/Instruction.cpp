@@ -197,7 +197,7 @@ void Instruction::initGuideLines()
 	guideLines.push_back(
 		GuideLine(
 			InstructionStep::FINISHED_INSTRUCTION,
-			"",
+			"Congratulation!\nYou finished the tutorial! Keep moving on!",
 			cocos2d::Vec2(INFINITE_POINT_TO, INFINITE_POINT_TO)
 		)
 	);
@@ -209,6 +209,16 @@ bool Instruction::checkPreCondition(Instruction::InstructionStep step)
 {
 	if (step == currentStep + 1)
 	{
+		return true;
+	}
+
+	// if finished instruction
+	if (step == Instruction::InstructionStep::FINISHED_INSTRUCTION)
+	{
+		for (int i = 0; i < (int)FINISHED_INSTRUCTION; i++)
+		{
+			guideLines.at(i).isAlreadyShowed = true;
+		}
 		return true;
 	}
 

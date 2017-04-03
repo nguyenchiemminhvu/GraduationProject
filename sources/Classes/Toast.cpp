@@ -23,7 +23,7 @@ Toast::Toast(cocos2d::Node * target, const char * text, float duration)
 	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
 	label = cocos2d::LabelTTF::create(text, "fonts/Schoolbook.ttf", 30);
-	label->setFontFillColor(cocos2d::Color3B::GRAY);
+	label->setFontFillColor(cocos2d::Color3B::ORANGE);
 	label->setCascadeOpacityEnabled(true);
 	label->setOpacity(255);
 	this->addChild(label);

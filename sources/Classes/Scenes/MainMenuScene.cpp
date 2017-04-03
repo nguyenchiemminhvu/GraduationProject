@@ -5,12 +5,9 @@
 #include "Scenes\CreditsScene.h"
 #include "Scenes\LevelSelectionBoard.h"
 #include "Scenes\StoryScene.h"
+#include "Scenes\GameScene.h"
 #include "SoundManager.h"
-
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-#include "pluginfacebook\PluginFacebook.h"
-#endif
+#include "Utility.h"
 
 
 cocos2d::Scene * MainMenu::createScene()
@@ -34,6 +31,10 @@ bool MainMenu::init()
 	initButtons();
 	
 	SoundManager::getInstance()->playStoryMusic();
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	sdkbox::PluginFacebook::setListener(this);
+#endif
 
 	return true;
 }
@@ -125,6 +126,26 @@ void MainMenu::replaceLevelSelectionBoard()
 	auto levelBoard = LevelSelectionBoard::createScene();
 	cocos2d::Director::getInstance()->replaceScene(levelBoard);
 }
+
+
+void MainMenu::replaceTutorialLevel()
+{
+	auto tutorial = GameScene::createScene();
+	cocos2d::Director::getInstance()->replaceScene(tutorial);
+}
+
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+void MainMenu::onSharedSuccess(const std::string & message)
+{
+	Toast::displayToast(this, "Shared success!", 2.0F);
+}
+
+void MainMenu::onSharedFailed(const std::string & message)
+{
+	Toast::displayToast(this, "Shared failed!", 2.0F);
+}
+#endif
 
 
 void MainMenu::onButtonFAQTouched(cocos2d::Ref * ref, cocos2d::ui::Button::TouchEventType type)
@@ -245,8 +266,19 @@ void MainMenu::onButtonPlayTouched(cocos2d::Ref * ref, cocos2d::ui::Button::Touc
 			replaceStoryScene();
 		else
 #endif
-			replaceLevelSelectionBoard();
-		
+		{
+			if (GameSettings::getInstance()->getLevelStatus() == 0)
+			{
+				// lead to game scene
+				// it will load the tutorial level
+				replaceTutorialLevel();
+			}
+			else
+			{
+				replaceLevelSelectionBoard();
+			}
+		}
+
 		break;
 	
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:

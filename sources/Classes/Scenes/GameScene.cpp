@@ -133,7 +133,17 @@ bool GameScene::init()
 
 bool GameScene::loadTiledMapProperties()
 {
-	auto mapFile = cocos2d::String::createWithFormat("tiledmaps/level_%d.tmx", GameSettings::getInstance()->getSelectedLevel());
+	cocos2d::String *mapFile = nullptr;
+
+	if (GameSettings::getInstance()->getLevelStatus() == 0)
+	{
+		mapFile = cocos2d::String::create("tiledmaps/tutorial.tmx");
+	}
+	else
+	{
+		mapFile = cocos2d::String::createWithFormat("tiledmaps/level_%d.tmx", GameSettings::getInstance()->getSelectedLevel());
+	}
+	
 	map = cocos2d::TMXTiledMap::create(mapFile->getCString());
 	this->addChild(map);
 	
@@ -312,7 +322,7 @@ bool GameScene::initInstruction()
 
 	Instruction::getInstance()->loadRequirement(hud, startPos, endPos, buttonRun->getPosition());
 	
-	if (GameSettings::getInstance()->getSelectedLevel() == 1)
+	if (GameSettings::getInstance()->getLevelStatus() == 0)
 	{
 		GameSettings::getInstance()->enableInstruction();
 	}
@@ -438,7 +448,7 @@ bool GameScene::addNodeToPath(cocos2d::Vec2 nextNode)
 			Instruction::getInstance()->showInstruction(Instruction::InstructionStep::DRAW_THE_PATH);
 
 			// specify the end of the path
-			if (GameSettings::getInstance()->isInstructionNeeded() && path.size() >= 10)
+			if (GameSettings::getInstance()->isInstructionNeeded() && path.size() >= 5)
 			{
 				Instruction::getInstance()->showInstruction(Instruction::InstructionStep::SPECIFY_THE_END_POS);
 			}
@@ -698,10 +708,25 @@ void GameScene::onButtonReadyTouched(cocos2d::Ref * ref, cocos2d::ui::Button::To
 
 			// activate all immobilized monster
 			std::vector<ImmobilizedEnemy *>::iterator iter;
-			for (iter = immobilizedQueue.begin(); iter != immobilizedQueue.end(); iter++)
+			for (iter = immobilizedQueue.begin(); iter != immobilizedQueue.end(); )
 			{
 				(*iter)->activate();
+
+				if (IS_A(*iter, UpgradedChaser))
+				{
+					// keep track the upgraded chaser
+					// to send update path signal
+					iter++;
+				}
+				else
+				{
+					// remove the non-upgraded chaser
+					iter = immobilizedQueue.erase(iter);
+				}
 			}
+
+			// send all remaining immobilized monster to main character
+			mainCharacter->receiveImmobilizedQueue(immobilizedQueue);
 		}
 
 		break;

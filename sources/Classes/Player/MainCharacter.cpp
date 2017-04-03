@@ -6,6 +6,8 @@
 #include "GameSettings.h"
 #include "Utility.h"
 #include "SoundManager.h"
+#include "Instruction.h"
+#include "Enemies\Enemy.h"
 
 
 MainCharacter * MainCharacter::createMainCharacter(cocos2d::Layer * gameLayer, cocos2d::Vec2 initPos)
@@ -78,7 +80,14 @@ void MainCharacter::setPath(std::vector<cocos2d::Vec2>& path)
 	moveSequence = createMoveSequence();
 	moveSequence.pushBack(cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::setIdleAnimation)));
 	moveSequence.pushBack(cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::removePhysicsBody)));
-	moveSequence.pushBack(cocos2d::FadeOut::create(OPEN_NEXT_LEVEL_DURATION));
+
+	// if not tutorial level
+	if (GameSettings::getInstance()->getLevelStatus() != 0)
+	{
+		moveSequence.pushBack(cocos2d::FadeOut::create(OPEN_NEXT_LEVEL_DURATION));
+	}
+	
+	
 	moveSequence.pushBack(cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::onArrived)));
 }
 
@@ -125,6 +134,14 @@ void MainCharacter::beDestroyed()
 	this->stopAllActions();
 	this->setVisible(false);
 	this->getPhysicsBody()->removeFromWorld();
+}
+
+
+void MainCharacter::receiveImmobilizedQueue(std::vector<ImmobilizedEnemy*>& enemies)
+{
+	// list of enemies need to send signal from main character
+	// after main character moved to tile location
+	immobilizedQueue = enemies;
 }
 
 
@@ -185,6 +202,10 @@ cocos2d::Vector<cocos2d::FiniteTimeAction*> MainCharacter::createMoveSequence()
 
 		auto movement = cocos2d::MoveTo::create(MOVEMENT_DURATION_BETWEEN_TWO_NODE, path[i]);
 		actions.pushBack(movement);
+
+		// send tile location changed signal after moved one tile
+		auto locationChangedSignal = cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::sendTileLocationChangedSignal));
+		actions.pushBack(locationChangedSignal);
 	}
 
 	return actions;
@@ -194,31 +215,72 @@ cocos2d::Vector<cocos2d::FiniteTimeAction*> MainCharacter::createMoveSequence()
 void MainCharacter::onArrived()
 {
 	arrived = true;
-	openNextLevel();
 
-	// In-game instruction is no more needed
+	if (GameSettings::getInstance()->getLevelStatus() == 0)
+	{
+		// congratulate player
+		Instruction::getInstance()->showInstruction(Instruction::InstructionStep::FINISHED_INSTRUCTION);
+		
+		// wait for 3 seconds then go to level selection board
+		this->runAction(
+			cocos2d::Sequence::create(
+				cocos2d::DelayTime::create(5.0F),
+				cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::readyToPlay)),
+				cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::backToLevelSelectionBoard)),
+				NULL
+			)
+		);
+	}
+	else
+	{
+		openNextLevel();
+
+		// On the first time the player win the game (pass all level), 
+		// transition to the finished scene.
+		// On the next time and so on, just go back to level selection board
+		if (GameSettings::getInstance()->getSelectedLevel() == GameSettings::getInstance()->getTotalLevel()
+			&& !GameSettings::getInstance()->wonTheGame()
+			)
+		{
+			GameSettings::getInstance()->onPlayerWinAllLevel();
+			replaceFinishedScene();
+		}
+		else
+		{
+			backToLevelSelectionBoard();
+		}
+	}
+
+}
+
+
+void MainCharacter::readyToPlay()
+{
+	// open the first level after finished tutorial level
+	GameSettings::getInstance()->resetAllLevel();
+	GameSettings::getInstance()->enableLevel(1);
+
+	// Player can pass the tutorial level, so we don't need instruction anymore
 	GameSettings::getInstance()->disableInstruction();
 
-	// Player can pass the first level, so we don't need instruction anymore
-	GameSettings::getInstance()->disableInstruction();
+	// destroy in-game instruction
 	if (Instruction::hasInstance())
 	{
 		Instruction::destroyInstance();
 	}
+}
 
-	// On the first time the player win the game (pass all level), 
-	// transition to the finished scene.
-	// On the next time and so on, just go back to level selection board
-	if (	GameSettings::getInstance()->getSelectedLevel() == GameSettings::getInstance()->getTotalLevel()
-		&& !GameSettings::getInstance()->wonTheGame()
-		)
+
+void MainCharacter::sendTileLocationChangedSignal()
+{
+	std::vector<ImmobilizedEnemy *>::iterator iter;
+	for (iter = immobilizedQueue.begin(); iter != immobilizedQueue.end(); iter++)
 	{
-		GameSettings::getInstance()->onPlayerWinAllLevel();
-		replaceFinishedScene();
-	}
-	else
-	{
-		backToLevelSelectionBoard();
+		UpgradedChaser *upgradedChaser = dynamic_cast<UpgradedChaser *>(*iter);
+		if (upgradedChaser)
+		{
+			upgradedChaser->updateChasingPath();
+		}
 	}
 }
 
@@ -242,7 +304,7 @@ void MainCharacter::backToLevelSelectionBoard()
 	SoundManager::getInstance()->stopMusic();
 
 	auto levelBoard = LevelSelectionBoard::createScene();
-	cocos2d::Director::getInstance()->replaceScene(levelBoard);
+	cocos2d::Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(1.0F, levelBoard));
 }
 
 

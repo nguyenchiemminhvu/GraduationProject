@@ -10,6 +10,9 @@
 #define IDLE_ANIMATION_TAG		0x000000FF
 #define RUNNING_ANIMATION_TAG	0x0000FF00
 
+
+class ImmobilizedEnemy;
+
 class MainCharacter : public cocos2d::Sprite {
 public:
 
@@ -31,6 +34,8 @@ public:
 
 	void beDestroyed();
 
+	void receiveImmobilizedQueue(std::vector<ImmobilizedEnemy *> &enemies);
+
 private:
 
 	std::vector<cocos2d::Vec2> path;
@@ -42,6 +47,8 @@ private:
 	cocos2d::Animation *idleAnimation;
 	cocos2d::Animation *runningAnimation;
 
+	std::vector<ImmobilizedEnemy *> immobilizedQueue;
+
 	bool initMainCharacterAnimation();
 
 	void flipLeft();
@@ -50,6 +57,8 @@ private:
 	cocos2d::Vector<cocos2d::FiniteTimeAction *> createMoveSequence();
 	void onArrived();
 
+	void readyToPlay();
+	void sendTileLocationChangedSignal();
 	void removePhysicsBody();
 	void openNextLevel();
 	void backToLevelSelectionBoard();

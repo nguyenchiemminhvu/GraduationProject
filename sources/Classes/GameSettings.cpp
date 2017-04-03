@@ -85,6 +85,12 @@ int GameSettings::getSelectedLevel()
 }
 
 
+int GameSettings::getLevelStatus()
+{
+	return levelStatus;
+}
+
+
 void GameSettings::resetCurrentLevel()
 {
 	didResetLevel = true;
@@ -113,7 +119,7 @@ void GameSettings::load()
 		cocos2d::UserDefault::getInstance()->setBoolForKey("first_load", this->loaded);
 
 		selectedLevel = 0;
-		levelStatus = 1;
+		levelStatus = 0;
 		winTheGame = false;
 	}
 	else
@@ -202,7 +208,7 @@ GameSettings::GameSettings()
 
 	totalLevel = utils::countNumberOfFileWithFormat("tiledmaps/level_%d.tmx");
 	selectedLevel = 0;
-	levelStatus = 1; //enable the first level
+	levelStatus = 0;
 
 	needInstruction = true; // instruction is needed for the first level
 	isStoryShowed = false; // story of game will be showed for the first launch

@@ -76,11 +76,11 @@ private:
 	/////////////////////////////////////
 	// path
 	
-	bool isTouchedOnMap;
-	bool isPathCompleted;
-	std::vector<cocos2d::Vec2> path;
-	cocos2d::Vector<cocos2d::Sprite *> pathArrows;
-	std::map<cocos2d::Vec2, int> pathMap;
+	bool								isTouchedOnMap;
+	bool								isPathCompleted;
+	std::vector<cocos2d::Vec2>			path;
+	cocos2d::Vector<cocos2d::Sprite *>	pathArrows;
+	std::map<cocos2d::Vec2, int>		pathMap;
 
 	bool addNodeToPath(cocos2d::Vec2 nextNode);
 	bool isNextNodeValid(cocos2d::Vec2 nextNode);

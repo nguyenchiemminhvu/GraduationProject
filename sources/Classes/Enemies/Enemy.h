@@ -290,7 +290,7 @@ class Chaser : public cocos2d::Sprite, public ImmobilizedEnemy
 {
 public:
 
-	virtual void activate() { isActivated = true; }
+	virtual void activate();
 
 	virtual EnemyTypes getType() { return EnemyTypes::UNKNOWED; }
 
@@ -359,12 +359,16 @@ class UpgradedChaser : public Chaser
 {
 public:
 
+	virtual void activate();
+
 	virtual EnemyTypes getType() { return EnemyTypes::UPGRADED_CHASER; }
 
 	static Chaser* create(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
 	virtual ~UpgradedChaser();
 
 	virtual void update(float dt);
+
+	void updateChasingPath();
 
 protected:
 

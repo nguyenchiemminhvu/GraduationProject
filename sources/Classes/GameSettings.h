@@ -25,6 +25,7 @@ public:
 	void disableLevel(int index);
 	void selectLevel(int index);
 	int getSelectedLevel();
+	int getLevelStatus();
 	void resetCurrentLevel();
 	bool isLevelReset();
 	void save();
