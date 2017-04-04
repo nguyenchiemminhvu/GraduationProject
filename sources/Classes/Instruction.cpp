@@ -170,7 +170,7 @@ void Instruction::initGuideLines()
 			InstructionStep::USE_BUTTON_RUN,
 			"Now, hold the button Run! And choose the right time to release.",
 			buttonRunPos,
-			30.0F,
+			80.0F,
 			false
 		)
 	);

@@ -3,6 +3,7 @@
 #include "GameSettings.h"
 #include "Scenes\LevelSelectionBoard.h"
 #include "Scenes\FinishedScene.h"
+#include "Scenes\MainMenuScene.h"
 #include "Toast.h"
 #include "Utility.h"
 #include "HUD.h"
@@ -14,6 +15,75 @@
 
 MainCharacter *mc_Instance = nullptr;
 
+GameCache * GameCache::instance = nullptr;
+
+///////////////////////////////////////////////////////////
+// game cache
+
+GameCache * GameCache::getInstance()
+{
+	if (instance == nullptr)
+	{
+		instance = new GameCache();
+	}
+	return instance;
+}
+
+
+bool GameCache::hasInstance()
+{
+	return instance != nullptr;
+}
+
+
+void GameCache::destroyInstance()
+{
+	if (instance)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+}
+
+
+GameCache::GameCache()
+{
+	path.clear();
+}
+
+
+GameCache::~GameCache()
+{
+
+}
+
+
+void GameCache::storePath(std::vector<cocos2d::Vec2>& path)
+{
+	this->path = path;
+}
+
+
+std::vector<cocos2d::Vec2> GameCache::getData()
+{
+	return this->path;
+}
+
+
+bool GameCache::hasData()
+{
+	return !this->path.empty();
+}
+
+
+void GameCache::clearCache()
+{
+	this->path.clear();
+}
+
+
+////////////////////////////////////////////////////////////
+// Game scene
 
 cocos2d::Scene* GameScene::createScene()
 {
@@ -263,6 +333,20 @@ bool GameScene::initPath()
 	pathArrows.clear();
 	resetPath();
 
+	// load the previous path if exist
+	if (GameCache::getInstance()->hasData())
+	{
+		std::vector<cocos2d::Vec2> cacheData = GameCache::getInstance()->getData();
+		GameCache::getInstance()->clearCache();
+
+		// draw the path
+		std::vector<cocos2d::Vec2>::iterator iter;
+		for (iter = cacheData.begin(); iter != cacheData.end(); iter++)
+		{
+			addNodeToPath(*iter);
+		}
+	}
+
 	return true;
 }
 
@@ -282,7 +366,7 @@ bool GameScene::initUI()
 	auto buttonGetout = cocos2d::ui::Button::create("images/UI/game_scene_ui/button_give_up.png");
 	buttonGetout->setPosition(
 		cocos2d::Vec2(
-			origin.x + visibleSize.width - buttonGetout->getContentSize().width / 1.5F,
+			origin.x + visibleSize.width - buttonGetout->getContentSize().width / 1.8F,
 			origin.y + visibleSize.height - buttonGetout->getContentSize().height
 		)
 	);
@@ -293,7 +377,7 @@ bool GameScene::initUI()
 	buttonRun = cocos2d::ui::Button::create("images/UI/game_scene_ui/button_run.png");
 	buttonRun->setPosition(
 		cocos2d::Vec2(
-			origin.x + visibleSize.width - buttonRun->getContentSize().width / 1.5F,
+			origin.x + visibleSize.width - buttonRun->getContentSize().width / 1.8F,
 			origin.y + buttonRun->getContentSize().height
 		)
 	);
@@ -639,10 +723,16 @@ void GameScene::cleanPathColor()
 //////////////////////////////////////////////////////
 // events
 
-
 void GameScene::onMainCharacterDead()
 {
 	Instruction::getInstance()->showInstruction(Instruction::InstructionStep::MISSION_FAILED);
+
+	// store the current path
+	if (isPathCompleted)
+	{
+		GameCache::getInstance()->clearCache();
+		GameCache::getInstance()->storePath(this->path);
+	}
 
 	// load a new game scene with current selected level
 	// TODO: reset the current level to the origin state (avoid dynamic allocate memory)
@@ -667,8 +757,19 @@ void GameScene::onButtonGetoutTouched(cocos2d::Ref * ref, cocos2d::ui::Button::T
 		break;
 
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
-		SoundManager::getInstance()->stopMusic();
-		replaceLevelSelectionBoard();
+		{
+			GameCache::getInstance()->clearCache();
+			SoundManager::getInstance()->stopMusic();
+
+			if (GameSettings::getInstance()->getLevelStatus() == 0)
+			{
+				replaceMainMenu();
+			}
+			else
+			{
+				replaceLevelSelectionBoard();
+			}
+		}
 		break;
 
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:
@@ -941,8 +1042,17 @@ void GameScene::replaceCurrentLevel()
 {
 	GameSettings::getInstance()->resetCurrentLevel();
 
+	// save the current path of player into the cache
+
 	auto currentLevel = GameScene::createScene();
 	cocos2d::Director::getInstance()->replaceScene(currentLevel);
+}
+
+
+void GameScene::replaceMainMenu()
+{
+	auto mainMenu = MainMenu::createScene();
+	cocos2d::Director::getInstance()->replaceScene(mainMenu);
 }
 
 

@@ -19,6 +19,32 @@ class Instruction;
 enum class PathDirection;
 
 
+class GameCache
+{
+public:
+
+	static GameCache * getInstance();
+	bool		hasInstance();
+	void		destroyInstance();
+
+	virtual ~GameCache();
+
+	void storePath(std::vector<cocos2d::Vec2> &path);
+	std::vector<cocos2d::Vec2> getData();
+
+	bool hasData();
+	void clearCache();
+
+private:
+
+	static GameCache *instance;
+
+	std::vector<cocos2d::Vec2>	path;
+
+	GameCache();
+};
+
+
 class GameScene : public cocos2d::Layer {
 public:
 	static cocos2d::Scene* createScene();
@@ -129,6 +155,7 @@ private:
 
 	void replaceLevelSelectionBoard();
 	void replaceCurrentLevel();
+	void replaceMainMenu();
 
 	///////////////////////////////////////
 	// instruction

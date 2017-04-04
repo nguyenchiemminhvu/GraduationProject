@@ -105,7 +105,6 @@ bool GameSettings::isLevelReset()
 
 void GameSettings::save()
 {
-	cocos2d::UserDefault::getInstance()->setBoolForKey("first_load", true);
 	cocos2d::UserDefault::getInstance()->setIntegerForKey("level_status", levelStatus);
 }
 
@@ -126,8 +125,6 @@ void GameSettings::load()
 	{
 		selectedLevel = 0;
 		int status = cocos2d::UserDefault::getInstance()->getIntegerForKey("level_status");
-		if (status == 0)
-			status = 1;
 		levelStatus = status;
 
 		if (levelStatus >= getTotalLevel())
