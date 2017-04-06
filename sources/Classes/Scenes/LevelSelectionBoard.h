@@ -23,11 +23,16 @@ private:
 	cocos2d::Vec2 origin;
 	cocos2d::Size visibleSize;
 
+	cocos2d::Size	mapSize;
+	cocos2d::Size	layerSize;
+	cocos2d::Size	tileSize;
+
+	int totalPage;
+
 	//////////////////////////////////////
 	// board initializations
 
-	void initLevelBoardBackground();
-	void loadLevels();
+	bool loadDungeonMap(int page);
 	void initKeyEventListener();
 
 	//////////////////////////////////////
@@ -39,8 +44,8 @@ private:
 	//////////////////////////////////////
 	// others
 	
-	cocos2d::Menu* createRowOfLevels(int currentLevel, int totalLevel);
-	void onLevelSelected(cocos2d::Ref *ref);
+	int getTotalPage();
+	void onLevelSelected(cocos2d::Ref *sender, cocos2d::ui::Button::TouchEventType type);
 	void onKeyReleased(cocos2d::EventKeyboard::KeyCode key, cocos2d::Event *event);
 };
 

@@ -3,6 +3,7 @@
 #include "Scenes\GameScene.h"
 #include "Definition.h"
 #include "GameSettings.h"
+#include "Utility.h"
 
 
 cocos2d::Scene * LevelSelectionBoard::createScene()
@@ -22,74 +23,73 @@ bool LevelSelectionBoard::init()
 	origin = cocos2d::Director::getInstance()->getVisibleOrigin();
 	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
-	initLevelBoardBackground();
-	loadLevels();
+	totalPage = getTotalPage();
+
+	// load page 1
+	loadDungeonMap(1);
+	
 	initKeyEventListener();
 
 	return true;
 }
 
 
-void LevelSelectionBoard::initLevelBoardBackground()
+bool LevelSelectionBoard::loadDungeonMap(int page)
 {
-	auto background = cocos2d::Sprite::create("images/UI/level_selection_ui/level_selection_background.png");
-	background->setPosition(
-		cocos2d::Vec2(
-			origin.x + visibleSize.width / 2,
-			origin.y + visibleSize.height / 2
-		)
-	);
-	this->addChild(background);
-}
+	// load tiled map
+	auto mapFile = cocos2d::String::createWithFormat("tiledmaps/dungeon_map_%d.tmx", page);
+	auto map = cocos2d::TMXTiledMap::create(mapFile->getCString());
+	if (!map)
+		return false;
 
+	this->addChild(map);
 
-void LevelSelectionBoard::loadLevels()
-{
-	int totalLevel = GameSettings::getInstance()->getTotalLevel();
-	int currentLevelNumber = 0;
-	cocos2d::Vector<cocos2d::Menu *> rows;
-	while (currentLevelNumber < totalLevel) {
+	// find background layer
+	auto backgroundLayer = map->getLayer("background");
+	if (!backgroundLayer)
+		return false;
 
-		auto row = createRowOfLevels(currentLevelNumber + 1, totalLevel);
-		rows.pushBack(row);
-		currentLevelNumber += row->getChildrenCount();
-	}
+	// find room group
+	auto roomGroup = map->getObjectGroup("room");
+	if (!roomGroup)
+		return false;
 
-	auto gridLayout = cocos2d::ui::VBox::create(cocos2d::Size(visibleSize.width, 0));
-	gridLayout->setAnchorPoint(cocos2d::Vec2(0.5F, 0.5F));
+	// get tiled map properties
+	mapSize = map->getMapSize();
+	layerSize = backgroundLayer->getLayerSize();
+	tileSize = backgroundLayer->getMapTileSize();
 
-	for (int i = 0; i < rows.size(); i++) {
+	// init the rooms
+	auto rooms = roomGroup->getObjects();
+	for (int i = 0; i < rooms.size(); i++)
+	{
+		auto roomProperty = rooms[i].asValueMap();
 
-		auto layoutSpaceTop = cocos2d::ui::Layout::create();
-		layoutSpaceTop->setContentSize(cocos2d::Size(rows.at(i)->getContentSize().width, rows.at(i)->getContentSize().height / 4));
-		gridLayout->addChild(layoutSpaceTop);
+		// get level number of the room
+		int levelNumber = roomProperty["level_number"].asInt();
 
-		auto layoutRow = cocos2d::ui::Layout::create();
-		layoutRow->setLayoutType(cocos2d::ui::Layout::Type::VERTICAL);
-		layoutRow->setContentSize(cocos2d::Size(rows.at(i)->getContentSize().width, rows.at(i)->getContentSize().height));
-		layoutRow->addChild(rows.at(i));
-		layoutRow->setTouchEnabled(true);
-		gridLayout->addChild(layoutRow);
-
-		auto layoutSpaceBottom = cocos2d::ui::Layout::create();
-		layoutSpaceBottom->setContentSize(cocos2d::Size(rows.at(i)->getContentSize().width, rows.at(i)->getContentSize().height / 4));
-		gridLayout->addChild(layoutSpaceBottom);
-
-		gridLayout->setContentSize(
-			cocos2d::Size(
-				gridLayout->getContentSize().width,
-				gridLayout->getContentSize().height + rows.at(i)->getContentSize().height
-			)
+		// get the door position
+		float x = roomProperty["x"].asFloat();
+		float y = roomProperty["y"].asFloat();
+		//y = (mapSize.height * tileSize.height) - y;
+		cocos2d::Vec2 doorPos(x, y);
+		
+		// create the door
+		auto door = cocos2d::ui::Button::create(
+			"images/UI/level_selection_ui/button_level_opened.png",
+			"images/UI/level_selection_ui/button_level_pressed.png",
+			"images/UI/level_selection_ui/button_level_disabled.png"
 		);
+		door->setAnchorPoint(cocos2d::Vec2(0.0F, 0.0F));
+		door->addTouchEventListener(CC_CALLBACK_2(LevelSelectionBoard::onLevelSelected, this));
+		door->setTag(i);
+		door->setPosition(doorPos);
+		door->setScale(0.5F);
+		map->addChild(door, (int)ZOrderLayer::LAYER_10);
 	}
-	
-	this->addChild(gridLayout);
-	gridLayout->setPosition(
-		cocos2d::Vec2(
-			origin.x + visibleSize.width / 2,
-			origin.y + gridLayout->getContentSize().height / 4
-		)
-	);
+
+
+	return true;
 }
 
 
@@ -115,43 +115,35 @@ void LevelSelectionBoard::replaceGameScene()
 }
 
 
-cocos2d::Menu * LevelSelectionBoard::createRowOfLevels(int level, int totalLevel)
+int LevelSelectionBoard::getTotalPage()
 {
-	cocos2d::Vector<cocos2d::MenuItem *> items;
-	cocos2d::Size itemSize;
-
-	for (int i = 1; i <= NUMBER_OF_LEVEL_ON_EACH_ROW && level <= totalLevel; i++, level++) {
-
-		auto item = cocos2d::MenuItemImage::create(
-			"images/UI/level_selection_ui/button_level_opened.png", 
-			"images/UI/level_selection_ui/button_level_pressed.png", 
-			"images/UI/level_selection_ui/button_level_disabled.png"
-		);
-		item->setScaleY(BUTTON_SIZE_SCALE_Y);
-		itemSize = item->getContentSize();
-		item->setTag(level);
-
-		item->setCallback(CC_CALLBACK_1(LevelSelectionBoard::onLevelSelected, this));
-		items.pushBack(item);
-
-		if (!GameSettings::getInstance()->isLevelEnabled(level)) {
-			item->setEnabled(false);
-		}
-	}
-
-	auto row = cocos2d::Menu::createWithArray(items);
-	row->alignItemsHorizontallyWithPadding(itemSize.width / 1.5F);
-	row->setContentSize(cocos2d::Size(visibleSize.width, itemSize.height));
-	return row;
+	return utils::countNumberOfFileWithFormat("tiledmaps/dungeon_map_%d.tmx");
 }
 
 
-void LevelSelectionBoard::onLevelSelected(cocos2d::Ref * ref)
+void LevelSelectionBoard::onLevelSelected(cocos2d::Ref * sender, cocos2d::ui::Button::TouchEventType type)
 {
-	auto item = dynamic_cast<cocos2d::MenuItemImage *>(ref);
-	GameSettings::getInstance()->selectLevel(item->getTag());
+	auto room = dynamic_cast<cocos2d::ui::Button *>(sender);
 
-	cocos2d::Director::getInstance()->replaceScene(GameScene::createScene());
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+		GameSettings::getInstance()->selectLevel(room->getTag());
+		cocos2d::Director::getInstance()->replaceScene(GameScene::createScene());
+		break;
+	
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	
+	default:
+		break;
+	}
 }
 
 

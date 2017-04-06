@@ -142,6 +142,7 @@ private:
 	// events
 
 	bool canTouch;
+	void enableMainCharacter();
 	void initTouchOneByOne();
 
 	void onMainCharacterDead();

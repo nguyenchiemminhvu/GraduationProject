@@ -231,6 +231,9 @@ bool GameScene::loadTiledMapProperties()
 	}
 	
 	map = cocos2d::TMXTiledMap::create(mapFile->getCString());
+	if (!map)
+		return false;
+
 	this->addChild(map);
 	
 	backgroundLayer = map->getLayer("background");
@@ -337,6 +340,8 @@ bool GameScene::initMainCharaceter()
 	mainCharacter->getPhysicsBody()->setDynamic(true);
 	mainCharacter->getPhysicsBody()->setContactTestBitmask((int)ContactTestBitmast::MAIN_CHARACTER);
 	mainCharacter->getPhysicsBody()->setCollisionBitmask((int)CollisionBismask::MAIN_CHARACTER);
+
+	mainCharacter->setVisible(false);
 
 	mc_Instance = mainCharacter;
 
@@ -534,6 +539,15 @@ bool GameScene::initTheEntranceDoor()
 }
 
 
+void GameScene::enableMainCharacter()
+{
+	if (mainCharacter && !mainCharacter->isVisible())
+	{
+		mainCharacter->setVisible(true);
+	}
+}
+
+
 void GameScene::initTouchOneByOne()
 {
 	auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
@@ -580,6 +594,7 @@ void GameScene::openEntranceDoor()
 	leftEntranceDoor->runAction(
 		cocos2d::Sequence::create(
 			leftAction,
+			cocos2d::CallFunc::create(this, callfunc_selector(GameScene::enableMainCharacter)),
 			cocos2d::CallFunc::create(this, callfunc_selector(GameScene::initTouchOneByOne)),
 			NULL
 		)
