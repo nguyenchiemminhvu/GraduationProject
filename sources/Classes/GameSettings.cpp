@@ -42,6 +42,25 @@ void GameSettings::disableSoundEffect()
 	soundEffectEnabled = false;
 }
 
+
+int GameSettings::getTotalMap()
+{
+	return utils::countNumberOfFileWithFormat("tiledmaps/dungeon_map_%d.tmx");
+}
+
+
+int GameSettings::getCurrentMap()
+{
+	return selectedMap;
+}
+
+
+void GameSettings::selectMapNumber(int index)
+{
+	selectedMap = index;
+}
+
+
 //////////////////////////////////
 // level settings
 
@@ -139,6 +158,9 @@ void GameSettings::resetAllLevel()
 {
 	winTheGame = false;
 
+	totalMap = getTotalMap();
+	selectedMap = 0;
+
 	totalLevel = utils::countNumberOfFileWithFormat("tiledmaps/level_%d.tmx");
 	selectedLevel = 0;
 	levelStatus = 1; //enable the first level
@@ -202,6 +224,9 @@ GameSettings::GameSettings()
 	winTheGame = false;
 
 	enableSoundEffect();
+
+	totalMap = getTotalMap();
+	selectedMap = 0;
 
 	totalLevel = utils::countNumberOfFileWithFormat("tiledmaps/level_%d.tmx");
 	selectedLevel = 0;

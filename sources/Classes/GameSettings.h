@@ -19,6 +19,10 @@ public:
 
 	//////////////////////////////////
 	// level settings
+	int getTotalMap();
+	int getCurrentMap();
+	void selectMapNumber(int index);
+
 	int getTotalLevel();
 	bool isLevelEnabled(int index);
 	void enableLevel(int index);
@@ -55,6 +59,9 @@ private:
 	bool winTheGame;
 
 	bool soundEffectEnabled;
+
+	int totalMap;
+	int selectedMap;
 
 	int totalLevel;
 	int selectedLevel;
