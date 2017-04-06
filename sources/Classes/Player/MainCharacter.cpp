@@ -2,12 +2,16 @@
 #include "Definition.h"
 #include "Scenes\LevelSelectionBoard.h"
 #include "Scenes\FinishedScene.h"
+#include "Scenes\GameScene.h"
 #include "Instruction.h"
 #include "GameSettings.h"
 #include "Utility.h"
 #include "SoundManager.h"
 #include "Instruction.h"
 #include "Enemies\Enemy.h"
+
+
+bool needCloseEntranceDoor = false;
 
 
 MainCharacter * MainCharacter::createMainCharacter(cocos2d::Layer * gameLayer, cocos2d::Vec2 initPos)
@@ -26,6 +30,7 @@ MainCharacter * MainCharacter::createMainCharacter(cocos2d::Layer * gameLayer, c
 
 MainCharacter::MainCharacter(cocos2d::Layer * gameLayer, cocos2d::Vec2 initPos)
 {
+	needCloseEntranceDoor = false;
 	started = false;
 	arrived = false;
 	this->setPosition(initPos);
@@ -226,6 +231,7 @@ void MainCharacter::onArrived()
 			cocos2d::Sequence::create(
 				cocos2d::DelayTime::create(5.0F),
 				cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::readyToPlay)),
+				cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::closeEntranceDoor)),
 				cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::backToLevelSelectionBoard)),
 				NULL
 			)
@@ -243,14 +249,36 @@ void MainCharacter::onArrived()
 			)
 		{
 			GameSettings::getInstance()->onPlayerWinAllLevel();
-			replaceFinishedScene();
+
+			this->runAction(
+				cocos2d::Sequence::create(
+					cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::closeEntranceDoor)),
+					cocos2d::DelayTime::create(1.5F),
+					cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::replaceFinishedScene)),
+					NULL
+				)
+			);
 		}
 		else
 		{
-			backToLevelSelectionBoard();
+			this->runAction(
+				cocos2d::Sequence::create(
+					cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::closeEntranceDoor)),
+					cocos2d::DelayTime::create(1.5F),
+					cocos2d::CallFunc::create(this, callfunc_selector(MainCharacter::backToLevelSelectionBoard)),
+					NULL
+				)
+			);
 		}
 	}
 
+}
+
+
+void MainCharacter::closeEntranceDoor()
+{
+	// emit a signal that force game scene close entrance door
+	needCloseEntranceDoor = true;
 }
 
 

@@ -57,6 +57,7 @@ private:
 	cocos2d::Vector<cocos2d::FiniteTimeAction *> createMoveSequence();
 	void onArrived();
 
+	void closeEntranceDoor();
 	void readyToPlay();
 	void sendTileLocationChangedSignal();
 	void removePhysicsBody();

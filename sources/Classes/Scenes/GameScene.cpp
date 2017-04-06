@@ -100,7 +100,6 @@ cocos2d::Scene* GameScene::createScene()
 
 	auto layer = GameScene::create();
 	scene->addChild(layer, (int)ZOrderLayer::LAYER_1);
-	layer->currentGameScene = scene;
 
 	return scene;
 }
@@ -116,6 +115,8 @@ bool GameScene::init()
 #if __DEBUG_MODE__
 	utils::startNewDebugSession();
 #endif
+
+	canTouch = false;
 
 	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	origin = cocos2d::Director::getInstance()->getVisibleOrigin();
@@ -150,7 +151,7 @@ bool GameScene::init()
 	if (!initInstruction())
 		return false;
 
-	if (!initTouchOneByOne())
+	if (!initTheEntranceDoor())
 		return false;
 	
 	if (!initContactListener())
@@ -195,8 +196,23 @@ bool GameScene::init()
 		hud->showSpeed();
 	}
 
+	this->scheduleUpdate();
+
 	return true;
 }
+
+
+void GameScene::update(float dt)
+{
+	// handle close entrance door signal from main character
+	extern bool needCloseEntranceDoor;
+	if (needCloseEntranceDoor)
+	{
+		needCloseEntranceDoor = false;
+		closeEntranceDoor();
+	}
+}
+
 
 ////////////////////////////////////////////////
 // initialization
@@ -253,7 +269,7 @@ bool GameScene::findStartPos()
 	startPos = pointToTileCoordinate(startPos);
 	startPos = tileCoordinateToPoint(startPos);
 	
-	auto nodeStart = cocos2d::Sprite::create();
+	auto nodeStart = cocos2d::Sprite::create("images/gateway/gate.png");
 	nodeStart->setPosition(startPos);
 	this->addChild(nodeStart);
 	
@@ -344,7 +360,18 @@ bool GameScene::initPath()
 		for (iter = cacheData.begin(); iter != cacheData.end(); iter++)
 		{
 			addNodeToPath(*iter);
+			cocos2d::log("%f %f", (*iter).x, (*iter).y);
 		}
+		isPathCompleted = true;
+
+		/////////////////////////////////////////////
+		// convert the path to game coordinate, 
+		// then send the path to main character
+		std::vector<cocos2d::Vec2> convertedPath = path;
+		for (int i = 0; i < path.size(); i++) {
+			convertedPath[i] = tileCoordinateToPoint(convertedPath[i]);
+		}
+		mainCharacter->setPath(convertedPath);
 	}
 
 	return true;
@@ -367,7 +394,7 @@ bool GameScene::initUI()
 	buttonGetout->setPosition(
 		cocos2d::Vec2(
 			origin.x + visibleSize.width - buttonGetout->getContentSize().width / 1.8F,
-			origin.y + visibleSize.height - buttonGetout->getContentSize().height
+			origin.y + visibleSize.height - buttonGetout->getContentSize().height / 1.3F
 		)
 	);
 	this->addChild(buttonGetout);
@@ -378,7 +405,7 @@ bool GameScene::initUI()
 	buttonRun->setPosition(
 		cocos2d::Vec2(
 			origin.x + visibleSize.width - buttonRun->getContentSize().width / 1.8F,
-			origin.y + buttonRun->getContentSize().height
+			origin.y + buttonRun->getContentSize().height / 1.3F
 		)
 	);
 	this->addChild(buttonRun);
@@ -473,7 +500,41 @@ bool GameScene::initEnemies()
 }
 
 
-bool GameScene::initTouchOneByOne()
+bool GameScene::initTheEntranceDoor()
+{
+	// left side
+	leftEntranceDoor = cocos2d::Sprite::create("images/gateway/left_entrance_door.png");
+	leftEntranceDoor->setAnchorPoint(cocos2d::Vec2(0.0F, 0.5F));
+	leftEntranceDoor->setPosition(
+		cocos2d::Vec2(
+			origin.x,
+			origin.y + visibleSize.height / 2
+		)
+	);
+		
+	// right side
+	rightEntranceDoor = cocos2d::Sprite::create("images/gateway/left_entrance_door.png");
+	rightEntranceDoor->setAnchorPoint(cocos2d::Vec2(1.0F, 0.5F));
+	rightEntranceDoor->setFlippedX(true);
+	rightEntranceDoor->setPosition(
+		cocos2d::Vec2(
+			origin.x + visibleSize.width,
+			origin.y + visibleSize.height / 2
+		)
+	);
+
+	this->addChild(leftEntranceDoor, (int)ZOrderLayer::LAYER_10);
+	this->addChild(rightEntranceDoor, (int)ZOrderLayer::LAYER_10);
+
+	isEntranceDoorOpened = false;
+
+	this->runAction(cocos2d::CallFunc::create(this, callfunc_selector(GameScene::openEntranceDoor)));
+
+	return true;
+}
+
+
+void GameScene::initTouchOneByOne()
 {
 	auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
 	touchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
@@ -481,7 +542,7 @@ bool GameScene::initTouchOneByOne()
 	touchListener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);;
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
 
-	return true;
+	canTouch = true;
 }
 
 
@@ -504,6 +565,61 @@ void GameScene::helloFromInstructor()
 void GameScene::showInstructionAtStartPos()
 {
 	Instruction::getInstance()->showInstruction(Instruction::InstructionStep::TOUCH_AT_START_POS);
+}
+
+
+void GameScene::openEntranceDoor()
+{
+	if (isEntranceDoorOpened)
+		return;
+
+	// entrance door action
+	auto leftAction = cocos2d::RotateBy::create(1.0F, cocos2d::Vec3(0.0F, 180.0F, 0.0F));
+	auto rightAction = cocos2d::RotateBy::create(1.0F, cocos2d::Vec3(0.0F, -180.0F, 0.0F));
+
+	leftEntranceDoor->runAction(
+		cocos2d::Sequence::create(
+			leftAction,
+			cocos2d::CallFunc::create(this, callfunc_selector(GameScene::initTouchOneByOne)),
+			NULL
+		)
+	);
+
+	rightEntranceDoor->runAction(
+		cocos2d::Sequence::create(
+			rightAction,
+			NULL
+		)
+	);
+
+	isEntranceDoorOpened = true;
+}
+
+
+void GameScene::closeEntranceDoor()
+{
+	if (!isEntranceDoorOpened)
+		return;
+
+	// entrance door action
+	auto leftAction = cocos2d::RotateBy::create(1.0F, cocos2d::Vec3(0.0F, -180.0F, 0.0F));
+	auto rightAction = cocos2d::RotateBy::create(1.0F, cocos2d::Vec3(0.0F, 180.0F, 0.0F));
+
+	leftEntranceDoor->runAction(
+		cocos2d::Sequence::create(
+			leftAction,
+			NULL
+		)
+	);
+
+	rightEntranceDoor->runAction(
+		cocos2d::Sequence::create(
+			rightAction,
+			NULL
+		)
+	);
+
+	isEntranceDoorOpened = true;
 }
 
 
@@ -757,6 +873,7 @@ void GameScene::onButtonGetoutTouched(cocos2d::Ref * ref, cocos2d::ui::Button::T
 		break;
 
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
+		if(canTouch)
 		{
 			GameCache::getInstance()->clearCache();
 			SoundManager::getInstance()->stopMusic();
@@ -797,7 +914,8 @@ void GameScene::onButtonReadyTouched(cocos2d::Ref * ref, cocos2d::ui::Button::To
 		// If player want to start the ball's journey, 
 		// - first condition  : the path is ready
 		// - second condition : the ball is not started yet
-		if (mainCharacter->ready() && !mainCharacter->isStarted())
+		// - third condition  : touch listener is initialized
+		if (canTouch && mainCharacter->ready() && !mainCharacter->isStarted())
 		{
 			mainCharacter->move();
 
@@ -1117,4 +1235,10 @@ cocos2d::Size GameScene::getLayerSize()
 cocos2d::Size GameScene::getTileSize()
 {
 	return tileSize;
+}
+
+
+void GameScene::onMainCharacterWinLevel()
+{
+	closeEntranceDoor();
 }

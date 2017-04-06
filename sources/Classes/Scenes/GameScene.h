@@ -50,6 +50,7 @@ public:
 	static cocos2d::Scene* createScene();
 
 	virtual bool init();
+	virtual void update(float dt);
 
 	CREATE_FUNC(GameScene);
 
@@ -66,12 +67,14 @@ public:
 	cocos2d::Size getLayerSize();
 	cocos2d::Size getTileSize();
 
+	/////////////////////////////////////
+	// entrance door handler
+	void onMainCharacterWinLevel();
+
 private:
 
 	cocos2d::Vec2 origin;
 	cocos2d::Size visibleSize;
-
-	cocos2d::Scene	*currentGameScene;
 
 	MainCharacter	*mainCharacter;
 
@@ -98,6 +101,9 @@ private:
 	// UI components
 	
 	cocos2d::ui::Button *buttonRun;
+	cocos2d::Sprite		*leftEntranceDoor;
+	cocos2d::Sprite		*rightEntranceDoor;
+	bool				isEntranceDoorOpened;
 
 	/////////////////////////////////////
 	// path
@@ -128,14 +134,15 @@ private:
 	bool initUI();
 	bool initHUD();
 	bool initInstruction();
-
 	bool initEnemies();
-
-	bool initTouchOneByOne();
+	bool initTheEntranceDoor();
 	bool initContactListener();
 
 	////////////////////////////////////
 	// events
+
+	bool canTouch;
+	void initTouchOneByOne();
 
 	void onMainCharacterDead();
 
@@ -162,6 +169,12 @@ private:
 	
 	void helloFromInstructor();
 	void showInstructionAtStartPos();
+
+	////////////////////////////////////////
+	// others
+
+	void openEntranceDoor();
+	void closeEntranceDoor();
 
 };
 
