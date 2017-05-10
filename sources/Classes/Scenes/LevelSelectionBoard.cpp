@@ -34,6 +34,9 @@ bool LevelSelectionBoard::init()
 bool LevelSelectionBoard::loadDungeonMaps()
 {
 	this->pageView = cocos2d::ui::PageView::create();
+	if (!this->pageView)
+		return false;
+
 	this->pageView->setTouchEnabled(true);
 	this->pageView->setContentSize(visibleSize);
 
@@ -41,6 +44,9 @@ bool LevelSelectionBoard::loadDungeonMaps()
 	for (int i = 1; i <= totalPage; i++)
 	{
 		auto layout = cocos2d::ui::Layout::create();
+		if (!layout)
+			return false;
+
 		layout->setContentSize(visibleSize);
 		
 		auto map = loadDungeonMap(i);
@@ -96,7 +102,6 @@ cocos2d::TMXTiledMap * LevelSelectionBoard::loadDungeonMap(int page)
 		// get the door position
 		float x = roomProperty["x"].asFloat();
 		float y = roomProperty["y"].asFloat();
-		//y = (mapSize.height * tileSize.height) - y;
 		cocos2d::Vec2 doorPos(x, y);
 		
 		// create the door

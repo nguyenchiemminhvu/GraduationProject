@@ -2,7 +2,6 @@
 #include "Toast.h"
 #include "GameSettings.h"
 #include "Definition.h"
-#include "Scenes\CreditsScene.h"
 #include "Scenes\LevelSelectionBoard.h"
 #include "Scenes\StoryScene.h"
 #include "Scenes\GameScene.h"
@@ -60,11 +59,6 @@ void MainMenu::initButtons()
 	buttonPlay->addTouchEventListener(CC_CALLBACK_2(MainMenu::onButtonPlayTouched, this));
 	buttonPlay->setScaleY(BUTTON_SIZE_SCALE_Y);
 
-	// create FAQ button
-	auto buttonFAQ = cocos2d::ui::Button::create("images/UI/main_menu_ui/FAQ_button.png");
-	buttonFAQ->addTouchEventListener(CC_CALLBACK_2(MainMenu::onButtonFAQTouched, this));
-	buttonFAQ->setScaleY(BUTTON_SIZE_SCALE_Y);
-
 	// create toggle button to setting sound
 	auto soundEffectToggle = cocos2d::ui::CheckBox::create("images/UI/main_menu_ui/sound_off_button.png", "", "images/UI/main_menu_ui/sound_on_button.png", "", "");
 	soundEffectToggle->setSelected(GameSettings::getInstance()->isSoundEffectEnabled());
@@ -76,6 +70,13 @@ void MainMenu::initButtons()
 	buttonFShare->addTouchEventListener(CC_CALLBACK_2(MainMenu::onButtonFacebookTouched, this));
 	buttonFShare->setScaleY(BUTTON_SIZE_SCALE_Y);
 
+#if __RELEASE_MODE__
+	// create button rate game
+	auto buttonRate = cocos2d::ui::Button::create("images/UI/main_menu_ui/rate_button.png");
+	buttonRate->addTouchEventListener(CC_CALLBACK_2(MainMenu::onButtonRateTouched, this));
+	buttonRate->setScaleY(BUTTON_SIZE_SCALE_Y);
+#endif
+
 	// add button play to main menu scene
 	buttonPlay->setPosition(
 		cocos2d::Vec2(
@@ -85,14 +86,16 @@ void MainMenu::initButtons()
 	);
 	this->addChild(buttonPlay);
 
-	// create group button (button faq, sound setting, facebook share)
+	// create group button (button rate, sound setting, facebook share)
 	auto menuToggle = cocos2d::ui::VBox::create();
 	menuToggle->setAnchorPoint(cocos2d::Vec2(0.5F, 0.5F));
-	menuToggle->addChild(buttonFAQ);
-	menuToggle->addChild(cocos2d::ui::VBox::create(cocos2d::Size(0, buttonFShare->getContentSize().height / 2)));
 	menuToggle->addChild(soundEffectToggle);
 	menuToggle->addChild(cocos2d::ui::VBox::create(cocos2d::Size(0, buttonFShare->getContentSize().height / 2)));
 	menuToggle->addChild(buttonFShare);
+#if __RELEASE_MODE__
+	menuToggle->addChild(cocos2d::ui::VBox::create(cocos2d::Size(0, buttonFShare->getContentSize().height / 2)));
+	menuToggle->addChild(buttonRate);
+#endif
 
 	// add group button at top left corner of main menu scene
 	this->addChild(menuToggle);
@@ -102,13 +105,6 @@ void MainMenu::initButtons()
 			origin.y + visibleSize.height - buttonFShare->getContentSize().height * 2
 		)
 	);
-}
-
-
-void MainMenu::replaceCreditsScene()
-{
-	auto credits = Credits::createScene();
-	cocos2d::Director::getInstance()->replaceScene(credits);
 }
 
 
@@ -146,31 +142,6 @@ void MainMenu::onSharedFailed(const std::string & message)
 	Toast::displayToast(this, "Shared failed!", 2.0F);
 }
 #endif
-
-
-void MainMenu::onButtonFAQTouched(cocos2d::Ref * ref, cocos2d::ui::Button::TouchEventType type)
-{
-	switch (type)
-	{
-	case cocos2d::ui::Widget::TouchEventType::BEGAN:
-		break;
-
-	case cocos2d::ui::Widget::TouchEventType::MOVED:
-		break;
-	
-	case cocos2d::ui::Widget::TouchEventType::ENDED:
-#if __DEBUG_MODE__
-		replaceCreditsScene();
-#endif
-		break;
-	
-	case cocos2d::ui::Widget::TouchEventType::CANCELED:
-		break;
-	
-	default:
-		break;
-	}
-}
 
 
 void MainMenu::onSoundEffectStateChanged(cocos2d::Ref * ref, cocos2d::ui::CheckBox::EventType type)
@@ -222,6 +193,7 @@ void MainMenu::onButtonFacebookTouched(cocos2d::Ref * ref, cocos2d::ui::Button::
 		if (!sdkbox::PluginFacebook::isLoggedIn())
 		{
 			sdkbox::PluginFacebook::login();
+			return;
 		}
 
 		// share content
@@ -230,7 +202,7 @@ void MainMenu::onButtonFacebookTouched(cocos2d::Ref * ref, cocos2d::ui::Button::
 		info.title = "cocos2d-x";
 		info.text = "Great 2D Game Engine";
 		info.image = "http://cocos2d-x.org/images/logo.png";
-		sdkbox::PluginFacebook::share(info);
+		sdkbox::PluginFacebook::dialog(info);
 #else
 		Toast::displayToast(this, "This feature is not implemented on this OS yet!", 2.0F);
 #endif
@@ -240,6 +212,28 @@ void MainMenu::onButtonFacebookTouched(cocos2d::Ref * ref, cocos2d::ui::Button::
 
 		break;
 
+	default:
+		break;
+	}
+}
+
+
+void MainMenu::onButtonRateTouched(cocos2d::Ref * ref, cocos2d::ui::Button::TouchEventType type)
+{
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+		break;
+	
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	
 	default:
 		break;
 	}

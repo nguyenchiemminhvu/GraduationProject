@@ -5,6 +5,7 @@
 
 #include "cocos2d.h"
 #include "Definition.h"
+#include "Utility.h"
 
 
 #define VECTOR_ZERO		cocos2d::Vec2(0.0F, 0.0F)
@@ -16,6 +17,7 @@
 #define IDLE_ANIMATION_TAG		0x000000FF
 #define RUNNING_ANIMATION_TAG	0x0000FF00
 #define EATING_ANIMATION_TAG	0x00FF0000
+
 
 class ImmobilizedEnemy
 {
@@ -368,12 +370,21 @@ public:
 
 	virtual void update(float dt);
 
+	utils::AStarChasingAlgorithm * getPathFinder();
+	void lockTarget(cocos2d::Node *target);
+
 	void updateChasingPath();
 
 protected:
 
 	UpgradedChaser(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
 	virtual void initEnemyAnimation();
+
+	utils::AStarChasingAlgorithm	*pathFinder;
+	cocos2d::Node					*target;
+	cocos2d::Sequence				*chasingSequence;
+
+	void createNewChasingSequence();
 
 private:
 

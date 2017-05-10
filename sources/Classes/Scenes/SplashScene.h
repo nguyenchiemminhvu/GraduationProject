@@ -22,10 +22,14 @@ private:
 	cocos2d::Sprite *splash;
 
 	void initSplash();
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 	void initKeyboardEventListener();
+#endif
 	void replaceMainMenuScene(float dt);
 
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 	void onKeyReleased(cocos2d::EventKeyboard::KeyCode key, cocos2d::Event *event);
+#endif
 };
 
 #endif //__SPLASH_SCENE_H__

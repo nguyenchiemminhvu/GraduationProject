@@ -23,7 +23,9 @@ bool SplashScene::init()
 	visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
 	initSplash();
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 	initKeyboardEventListener();
+#endif
 	this->scheduleOnce(schedule_selector(SplashScene::replaceMainMenuScene), 2.0F);
 
 	return true;
@@ -44,12 +46,14 @@ void SplashScene::initSplash()
 }
 
 
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 void SplashScene::initKeyboardEventListener()
 {
 	auto keyboardListener = cocos2d::EventListenerKeyboard::create();
 	keyboardListener->onKeyReleased = CC_CALLBACK_2(SplashScene::onKeyReleased, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 }
+#endif
 
 
 void SplashScene::replaceMainMenuScene(float dt)
@@ -59,6 +63,7 @@ void SplashScene::replaceMainMenuScene(float dt)
 }
 
 
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 void SplashScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode key, cocos2d::Event * event)
 {
 	switch (key)
@@ -71,3 +76,4 @@ void SplashScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode key, cocos2d::Ev
 		break;
 	}
 }
+#endif

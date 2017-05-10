@@ -472,20 +472,6 @@
   </data>
  </layer>
  <objectgroup name="Enemies">
-  <object id="5" type="2" x="268" y="593.333" width="32" height="32">
-   <properties>
-    <property name="speed" type="float" value="1"/>
-    <property name="start_direction" type="int" value="1"/>
-   </properties>
-   <ellipse/>
-  </object>
-  <object id="9" type="2" x="528" y="142.667" width="32" height="32">
-   <properties>
-    <property name="speed" type="float" value="1"/>
-    <property name="start_direction" type="int" value="2"/>
-   </properties>
-   <ellipse/>
-  </object>
   <object id="14" type="4" x="145.333" y="80" width="32" height="32">
    <properties>
     <property name="speed" type="float" value="1"/>

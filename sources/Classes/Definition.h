@@ -16,6 +16,7 @@
 #define SAFE_DELETE_ARRAY(p)		do { delete p[]; (p) = NULL; } while(0);
 
 #define TILE_WALL_DESCRIPTON		"wall"
+#define TILE_GROUND_DESCRIPTION		"ground"
 
 enum class PathDirection
 {

@@ -6,6 +6,8 @@
 #include "cocos2d.h"
 #include "ui\CocosGUI.h"
 
+#include "Utility.h"
+
 #include "Player\MainCharacter.h"
 #include "Enemies\Enemy.h"
 
@@ -49,6 +51,8 @@ class GameScene : public cocos2d::Layer {
 public:
 	static cocos2d::Scene* createScene();
 
+	virtual ~GameScene();
+
 	virtual bool init();
 	virtual void update(float dt);
 
@@ -56,7 +60,6 @@ public:
 
 	////////////////////////////////////
 	// coordinates
-
 	cocos2d::Vec2 pointToTileCoordinate(cocos2d::Vec2 point);
 	cocos2d::Vec2 tileCoordinateToPoint(cocos2d::Vec2 tileCoord);
 
@@ -97,6 +100,8 @@ private:
 	cocos2d::Vec2			startPos;
 	cocos2d::Vec2			endPos;
 
+	std::vector< std::vector<utils::AStarChasingAlgorithm::ANode *> > graph;
+
 	//////////////////////////////////////
 	// UI components
 	
@@ -128,6 +133,7 @@ private:
 	bool loadTiledMapProperties();
 	bool findStartPos();
 	bool findEndPos();
+	bool initGraph();
 	bool initPhysicsBodyWalls();
 	bool initMainCharaceter();
 	bool initPath();

@@ -39,7 +39,6 @@ private:
 	///////////////////////////////////
 	// main menu scene transitions
 
-	void replaceCreditsScene();
 	void replaceStoryScene();
 	void replaceLevelSelectionBoard();
 	void replaceTutorialLevel();
@@ -62,10 +61,9 @@ private:
 #endif
 	//////////////////////////////////
 	// others
-
-	void onButtonFAQTouched(cocos2d::Ref *ref, cocos2d::ui::Button::TouchEventType type);
 	void onSoundEffectStateChanged(cocos2d::Ref *ref, cocos2d::ui::CheckBox::EventType type);
 	void onButtonFacebookTouched(cocos2d::Ref *ref, cocos2d::ui::Button::TouchEventType type);
+	void onButtonRateTouched(cocos2d::Ref *ref, cocos2d::ui::Button::TouchEventType type);
 	void onButtonPlayTouched(cocos2d::Ref *ref, cocos2d::ui::Button::TouchEventType type);
 
 };

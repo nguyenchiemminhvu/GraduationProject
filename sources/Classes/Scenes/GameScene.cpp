@@ -5,7 +5,6 @@
 #include "Scenes\FinishedScene.h"
 #include "Scenes\MainMenuScene.h"
 #include "Toast.h"
-#include "Utility.h"
 #include "HUD.h"
 #include "Instruction.h"
 #include "SoundManager.h"
@@ -105,6 +104,18 @@ cocos2d::Scene* GameScene::createScene()
 }
 
 
+GameScene::~GameScene()
+{
+	for (int i = 0; i < graph.size(); i++)
+	{
+		for (int j = 0; j < graph[i].size(); j++)
+		{
+			SAFE_DELETE(graph[i][j]);
+		}
+	}
+}
+
+
 bool GameScene::init()
 {
 	if (!Layer::init())
@@ -128,6 +139,9 @@ bool GameScene::init()
 		return false;
 	
 	if (!findEndPos())
+		return false;
+
+	if (!initGraph())
 		return false;
 
 	if (!initPhysicsBodyWalls())
@@ -299,6 +313,29 @@ bool GameScene::findEndPos()
 	auto nodeEnd = cocos2d::Sprite::create("images/gateway/gate.png");
 	nodeEnd->setPosition(endPos);
 	this->addChild(nodeEnd);
+
+	return true;
+}
+
+
+bool GameScene::initGraph()
+{
+	graph.resize(getLayerSize().height);
+	for (int row = 0; row < getLayerSize().height; row++)
+	{
+		graph.at(row).resize(getLayerSize().width);
+		for (int col = 0; col < getLayerSize().width; col++)
+		{
+			if (getTileDescription(cocos2d::Vec2(row, col)) == TILE_WALL_DESCRIPTON)
+			{
+				graph[row][col] = new utils::AStarChasingAlgorithm::ANode(row, col, false);
+			}
+			else if(getTileDescription(cocos2d::Vec2(row, col)) == TILE_GROUND_DESCRIPTION)
+			{
+				graph[row][col] = new utils::AStarChasingAlgorithm::ANode(row, col);
+			}
+		}
+	}
 
 	return true;
 }
@@ -498,6 +535,14 @@ bool GameScene::initEnemies()
 		if (IS_A(enemy, ImmobilizedEnemy))
 		{
 			immobilizedQueue.push_back(dynamic_cast<ImmobilizedEnemy *>(enemy));
+
+			if (IS_A(enemy, UpgradedChaser))
+			{
+				UpgradedChaser * chaser = (dynamic_cast<UpgradedChaser *>(enemy));
+				chaser->lockTarget(mainCharacter);
+				chaser->getPathFinder()->readInput(getLayerSize().height, getLayerSize().width, graph);
+				chaser->updateChasingPath();
+			}
 		}
 	}
 

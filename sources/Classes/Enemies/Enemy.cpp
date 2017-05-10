@@ -1,5 +1,4 @@
 #include "Enemy.h"
-#include "Utility.h"
 #include "Scenes\GameScene.h"
 
 
@@ -1284,7 +1283,7 @@ Chaser * UpgradedChaser::create(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, f
 
 UpgradedChaser::~UpgradedChaser()
 {
-
+	SAFE_DELETE(pathFinder);
 }
 
 
@@ -1294,9 +1293,29 @@ void UpgradedChaser::update(float dt)
 }
 
 
+utils::AStarChasingAlgorithm * UpgradedChaser::getPathFinder()
+{
+	return this->pathFinder;
+}
+
+
+void UpgradedChaser::lockTarget(cocos2d::Node * target)
+{
+	this->target = target;
+}
+
+
 void UpgradedChaser::updateChasingPath()
 {
+	GameScene *gameScene = dynamic_cast<GameScene *>(gameLayer);
+	cocos2d::Vec2 chaserOnTilePos	= gameScene->pointToTileCoordinate(this->getPosition());
+	cocos2d::Vec2 mcOnTilePos		= gameScene->pointToTileCoordinate(target->getPosition());
+	pathFinder->start				= pathFinder->graph[chaserOnTilePos.x][chaserOnTilePos.y];
+	pathFinder->end					= pathFinder->graph[mcOnTilePos.x][mcOnTilePos.y];
+	pathFinder->pathFinding();
 
+	if (isActivated)
+		createNewChasingSequence();
 }
 
 
@@ -1305,6 +1324,8 @@ UpgradedChaser::UpgradedChaser(cocos2d::Layer * gameLayer, cocos2d::Vec2 pos, fl
 {
 	initEnemyAnimation();
 	setIdleAnimation();
+
+	pathFinder = new utils::AStarChasingAlgorithm();
 }
 
 
@@ -1313,7 +1334,7 @@ void UpgradedChaser::initEnemyAnimation()
 	///////////////////////////////////////////////////////
 	// init idle animation
 	cocos2d::Vector<cocos2d::SpriteFrame *> idleFrames;
-
+	
 	int numOfIdleFrames = utils::countNumberOfFileWithFormat("images/enemies/type8/obstacle_idle_%d.png");
 	for (int i = 1; i <= 10; i++)
 	{
@@ -1351,6 +1372,25 @@ void UpgradedChaser::initEnemyAnimation()
 	}
 	eatingAnimation = cocos2d::Animation::createWithSpriteFrames(eatingFrames, (1.0F / 60.0F) * 4);
 	eatingAnimation->retain();
+}
+
+
+void UpgradedChaser::createNewChasingSequence()
+{
+	this->stopAction(chasingSequence);
+	CC_SAFE_DELETE(chasingSequence);
+
+	cocos2d::Vector<cocos2d::FiniteTimeAction *> actionList;
+	std::list<utils::AStarChasingAlgorithm::ANode *>::iterator iter;
+	for (iter = pathFinder->path.begin(); iter != pathFinder->path.end(); iter++)
+	{
+		cocos2d::Vec2 posToCome = cocos2d::Vec2((*iter)->x, (*iter)->y);
+		cocos2d::MoveBy *moveBy = cocos2d::MoveBy::create((MOVEMENT_DURATION_BETWEEN_TWO_NODE * 2) / speed, posToCome);
+		actionList.pushBack(moveBy);
+	}
+
+	chasingSequence = cocos2d::Sequence::create(actionList);
+	this->runAction(chasingSequence);
 }
 
 
