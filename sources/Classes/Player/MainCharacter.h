@@ -59,6 +59,7 @@ private:
 
 	void closeEntranceDoor();
 	void readyToPlay();
+	void activateAllImmobilizedEnemy();
 	void sendTileLocationChangedSignal();
 	void removePhysicsBody();
 	void openNextLevel();

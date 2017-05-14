@@ -110,6 +110,9 @@ void MainCharacter::move()
 	started = true;
 	setRunningAnimation();
 	this->runAction(cocos2d::Sequence::create(moveSequence));
+
+	// active all immobilized enemy
+	activateAllImmobilizedEnemy();
 }
 
 //////////////////////////////////////////////////
@@ -295,6 +298,16 @@ void MainCharacter::readyToPlay()
 	if (Instruction::hasInstance())
 	{
 		Instruction::destroyInstance();
+	}
+}
+
+
+void MainCharacter::activateAllImmobilizedEnemy()
+{
+	std::vector<ImmobilizedEnemy *>::iterator iter;
+	for (iter = immobilizedQueue.begin(); iter != immobilizedQueue.end(); iter++)
+	{
+		(*iter)->activate();
 	}
 }
 

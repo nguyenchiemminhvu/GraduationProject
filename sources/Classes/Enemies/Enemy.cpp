@@ -1189,6 +1189,7 @@ void ForwardingChaser::update(float dt)
 		chasingDirection = mc_Instance->getPosition() - this->getPosition();
 		chasingDirection.normalize();
 
+		prePos = this->getPosition();
 		cocos2d::Vec2 nextPos = this->getPosition() + (chasingDirection * dt);
 		this->setPosition(nextPos);
 	}
@@ -1196,6 +1197,18 @@ void ForwardingChaser::update(float dt)
 	{
 		chasingDirection = VECTOR_ZERO;
 	}
+}
+
+
+void ForwardingChaser::setPrePositionX()
+{
+	this->setPositionX(prePos.x);
+}
+
+
+void ForwardingChaser::setPrePositionY()
+{
+	this->setPositionY(prePos.y);
 }
 
 
@@ -1314,8 +1327,23 @@ void UpgradedChaser::updateChasingPath()
 	pathFinder->end					= pathFinder->graph[mcOnTilePos.x][mcOnTilePos.y];
 	pathFinder->pathFinding();
 
-	if (isActivated)
-		createNewChasingSequence();
+	if (isActivated && pathFinder && !pathFinder->path.empty())
+	{
+		this->stopAllActionsByTag(CHASING_ACTION_TAG);
+
+		cocos2d::Vector<cocos2d::FiniteTimeAction *> actionList;
+		std::list<utils::AStarChasingAlgorithm::ANode *>::iterator iter;
+		for (iter = pathFinder->path.begin(); iter != pathFinder->path.end(); iter++)
+		{
+			cocos2d::Vec2 posToCome = gameScene->tileCoordinateToPoint(cocos2d::Vec2((*iter)->x, (*iter)->y));
+			cocos2d::MoveBy *moveBy = cocos2d::MoveBy::create((MOVEMENT_DURATION_BETWEEN_TWO_NODE * 2) / speed, posToCome);
+			actionList.pushBack(moveBy);
+		}
+
+		chasingSequence = cocos2d::Sequence::create(actionList);
+		chasingSequence->setTag(CHASING_ACTION_TAG);
+		this->runAction(chasingSequence);
+	}
 }
 
 
@@ -1374,24 +1402,6 @@ void UpgradedChaser::initEnemyAnimation()
 	eatingAnimation->retain();
 }
 
-
-void UpgradedChaser::createNewChasingSequence()
-{
-	this->stopAction(chasingSequence);
-	CC_SAFE_DELETE(chasingSequence);
-
-	cocos2d::Vector<cocos2d::FiniteTimeAction *> actionList;
-	std::list<utils::AStarChasingAlgorithm::ANode *>::iterator iter;
-	for (iter = pathFinder->path.begin(); iter != pathFinder->path.end(); iter++)
-	{
-		cocos2d::Vec2 posToCome = cocos2d::Vec2((*iter)->x, (*iter)->y);
-		cocos2d::MoveBy *moveBy = cocos2d::MoveBy::create((MOVEMENT_DURATION_BETWEEN_TWO_NODE * 2) / speed, posToCome);
-		actionList.pushBack(moveBy);
-	}
-
-	chasingSequence = cocos2d::Sequence::create(actionList);
-	this->runAction(chasingSequence);
-}
 
 
 //////////////////////////////////////////////////////

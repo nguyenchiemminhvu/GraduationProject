@@ -121,17 +121,13 @@ utils::AStarChasingAlgorithm::ANode::ANode(int _x, int _y, bool _w)
 
 utils::AStarChasingAlgorithm::AStarChasingAlgorithm()
 {
-
+	start = end = nullptr;
 }
 
 
 utils::AStarChasingAlgorithm::~AStarChasingAlgorithm()
 {
-	while (!path.empty())
-	{
-		SAFE_DELETE(path.front());
-		path.erase(path.begin());
-	}
+	
 }
 
 
@@ -155,9 +151,9 @@ void utils::AStarChasingAlgorithm::readInput(int num_row, int num_col, std::vect
 
 void utils::AStarChasingAlgorithm::pathFinding()
 {
-	//There are 8 directions to move around from one Node on the graph
-	int x_move[] = { -1, 0, 1, 0, -1, 1, 1, -1 };
-	int y_move[] = { 0, -1, 0, 1, -1, -1, 1, 1 };
+	//There are 4 directions to move around from one Node on the graph
+	int x_move[] = { -1, 0, 1, 0 };
+	int y_move[] = { 0, -1, 0, 1 };
 
 	const int MAX_MOVE = sizeof(x_move) / sizeof(int);
 

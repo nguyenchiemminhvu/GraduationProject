@@ -247,6 +247,14 @@ void HUD::loadSpeed(std::map<int, float> speedForHud)
 		{
 			monsterSprite = cocos2d::ui::ImageView::create("images/enemies/type5or6/obstacle_speed.png");
 		}
+		else if ((*iter).first == (int)EnemyTypes::FORWARDING_CHASER)
+		{
+			monsterSprite = cocos2d::ui::ImageView::create("images/enemies/type7/obstacle_speed.png");
+		}
+		else if ((*iter).first == (int)EnemyTypes::UPGRADED_CHASER)
+		{
+			monsterSprite = cocos2d::ui::ImageView::create("images/enemies/type8/obstacle_speed.png");
+		}
 
 		monsterSprite->setLayoutParameter(layoutRowParam);
 		monsterSpeed->addChild(monsterSprite);

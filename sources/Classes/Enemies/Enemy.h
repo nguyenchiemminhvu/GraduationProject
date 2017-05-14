@@ -340,6 +340,9 @@ public:
 
 	virtual void update(float dt);
 
+	void setPrePositionX();
+	void setPrePositionY();
+
 protected:
 
 	ForwardingChaser(cocos2d::Layer *gameLayer, cocos2d::Vec2 pos, float speed);
@@ -348,6 +351,7 @@ protected:
 private:
 
 	cocos2d::Vec2	chasingDirection;
+	cocos2d::Vec2	prePos;
 
 };
 
@@ -356,6 +360,8 @@ private:
 
 #ifndef __UPGRADED_CHASER__
 #define __UPGRADED_CHASER__
+
+#define CHASING_ACTION_TAG 0xFF000000
 
 class UpgradedChaser : public Chaser
 {
@@ -383,8 +389,6 @@ protected:
 	utils::AStarChasingAlgorithm	*pathFinder;
 	cocos2d::Node					*target;
 	cocos2d::Sequence				*chasingSequence;
-
-	void createNewChasingSequence();
 
 private:
 

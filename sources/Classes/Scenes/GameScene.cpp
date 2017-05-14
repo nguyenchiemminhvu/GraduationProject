@@ -10,6 +10,7 @@
 #include "SoundManager.h"
 
 #include <algorithm>
+#include <functional>
 
 
 MainCharacter *mc_Instance = nullptr;
@@ -106,9 +107,9 @@ cocos2d::Scene* GameScene::createScene()
 
 GameScene::~GameScene()
 {
-	for (int i = 0; i < graph.size(); i++)
+	for (unsigned int i = 0; i < graph.size(); i++)
 	{
-		for (int j = 0; j < graph[i].size(); j++)
+		for (unsigned int j = 0; j < graph[i].size(); j++)
 		{
 			SAFE_DELETE(graph[i][j]);
 		}
@@ -337,6 +338,16 @@ bool GameScene::initGraph()
 		}
 	}
 
+	// for debug
+	for (int row = 0; row < getLayerSize().height; row++)
+	{
+		for (int col = 0; col < getLayerSize().width; col++)
+		{
+			cocos2d::log("%c", graph.at(row).at(col)->walkable ? '-' : '*');
+		}
+		cocos2d::log("");
+	}
+
 	return true;
 }
 
@@ -410,7 +421,7 @@ bool GameScene::initPath()
 		// convert the path to game coordinate, 
 		// then send the path to main character
 		std::vector<cocos2d::Vec2> convertedPath = path;
-		for (int i = 0; i < path.size(); i++) {
+		for (unsigned int i = 0; i < path.size(); i++) {
 			convertedPath[i] = tileCoordinateToPoint(convertedPath[i]);
 		}
 		mainCharacter->setPath(convertedPath);
@@ -493,7 +504,7 @@ bool GameScene::initEnemies()
 	enemyFactory = new EnemyFactory();
 	auto enemies = enemyGroup->getObjects();
 
-	for (int i = 0; i < enemies.size(); i++) {
+	for (unsigned int i = 0; i < enemies.size(); i++) {
 
 		auto properties = enemies[i].asValueMap();
 
@@ -541,7 +552,6 @@ bool GameScene::initEnemies()
 				UpgradedChaser * chaser = (dynamic_cast<UpgradedChaser *>(enemy));
 				chaser->lockTarget(mainCharacter);
 				chaser->getPathFinder()->readInput(getLayerSize().height, getLayerSize().width, graph);
-				chaser->updateChasingPath();
 			}
 		}
 	}
@@ -889,7 +899,7 @@ void GameScene::unpaintTileNode(cocos2d::Vec2 tilePos)
 
 void GameScene::cleanPathColor()
 {
-	for (int i = 0; i < path.size(); i++) {
+	for (unsigned int i = 0; i < path.size(); i++) {
 
 		unpaintTileNode(path[i]);
 	}
@@ -1119,7 +1129,7 @@ void GameScene::onTouchEnded(cocos2d::Touch * touch, cocos2d::Event * event)
 		// convert the path to game coordinate, 
 		// then send the path to main character
 		std::vector<cocos2d::Vec2> convertedPath = path;
-		for (int i = 0; i < path.size(); i++) {
+		for (unsigned int i = 0; i < path.size(); i++) {
 			convertedPath[i] = tileCoordinateToPoint(convertedPath[i]);
 		}
 		mainCharacter->setPath(convertedPath);
